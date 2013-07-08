@@ -5,7 +5,7 @@ then
 	name=${1##*/}
 	name=${name%.*}
 	resolution=`echo $name|awk 'BEGIN{FS="_"}{print $2}'`
-	fsp=`echo $name|awk 'BEGIN{FS="_"}{print $3}'`
+	fps=`echo $name|awk 'BEGIN{FS="_"}{print $3}'`
 	case $resolution in
 	"720p")
 		width=1280
@@ -22,9 +22,14 @@ then
 	esac
 	frame_size=`expr $width \* $height \* 3 / 2`
 	frame_count=`expr $size / $frame_size`
+#use The kush Gauge
+#Frame width * frame height * frame rate * motion rate (1,2 or 4) * constant (0.07)/1,000 = target bit rate in kilobits per second (kbps)
+	motion_rate=4
+	#bitrate in kbps
+	bitrate=`echo "$width * $height * $fps * $motion_rate * 0.07 / 1000" | bc`
 	if [ $# -eq 1 ]
 	then
-		echo "$1 $width $height $fsp $frame_count"
+		echo "$1 $width $height $fps $frame_count $bitrate"
 	elif [ $# -eq 2 ]
 	then
 		runtime=`date +%Y%m%d_%H%M%S`

@@ -9,7 +9,7 @@ then
 	time x264 -o test.264 --profile high --level 3.1 --fps $4 --frames $5 --threads 1 --bitrate 1000 $1 --input-res $2"x"$3
 elif [ $# -eq 6 ] && [ -f $1 ] 
 then
-	time x264 -o test.264 --profile high --level 3.1 --fps $4 --frames $5 --threads 1 --bitrate $5 $1 --input-res $2"x"$3
+	time x264 -o test.264 --profile high --level 3.1 --fps $4 --frames $5 --threads 1 --bitrate $6 $1 --input-res $2"x"$3
 elif [ $# -eq 1 ] && [ -f $1 ]
 then
 	time x264 -o test.264 --profile high --level 3.1 --fps 25 --frames 60 --threads 1 --bitrate 1000 $1 --input-res 1920x1080
