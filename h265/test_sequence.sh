@@ -33,17 +33,56 @@ function test_sequence
 		done
 	fi
 }
-if [ $# -eq 3 ] && [ -d $1 ]
+
+max_task=1	#default
+task_queue=""
+task_count=0
+
+function add_task
+{
+	task_queue="$task_queue $1"
+	task_count=`expr $task_count + 1`
+}
+
+function check_task_queue
+{
+	old_task_queue=$task_queue
+	task_count=0
+	task_queue=""
+	for task_pid in $old_task_queue
+	do
+		if [ -d /proc/$task_pid ]
+		then
+			add_task $task_pid
+		fi
+	done
+}
+
+
+
+
+if [ $# -ge 3 ] && [ -d $1 ]
 then
+	if [ $# -eq 4 ]
+	then
+		max_task=$4
+	fi
 	for seq in $1/*.yuv
 	do
-		test_sequence $seq $2 $3
+		$0 $seq $2 $3 &
+		add_task $!
+		while [ $task_count -ge $max_task ]
+		do
+			check_task_queue
+			sleep 1
+		done
 	done
-elif [ $# -eq 3 ] && [ -f $1 ]
+	wait
+elif [ $# -ge 3 ] && [ -f $1 ]
 then
 	test_sequence $@
 else
-	echo usage: $0 sequencefile cfgdir logdir
-	echo usage: $0 sequencedir cfgdir logdir
+	echo usage: $0 sequencefile cfgdir logdir max_task
+	echo usage: $0 sequencedir cfgdir logdir max_task
 fi
 

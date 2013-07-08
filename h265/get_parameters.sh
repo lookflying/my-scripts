@@ -29,7 +29,7 @@ then
 	bitrate=`echo "$width * $height * $fps * $motion_rate * 0.07 / 1000" | bc`
 	if [ $# -eq 1 ]
 	then
-		echo "$1 $width $height $fps $frame_count $bitrate"
+		echo "$1 $width $height $fps $frame_count $bitrate $name"
 	elif [ $# -eq 2 ]
 	then
 		runtime=`date +%Y%m%d_%H%M%S`
