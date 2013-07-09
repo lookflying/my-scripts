@@ -8,11 +8,12 @@ function analyze_log
 #	echo $file_name
 #	echo $video
 #	echo $encoder
-
+	
 	case $encoder in
 	"x264")
 		bitrate=`cat $file|grep -e "encoded.*frames"|awk '{print $6}'`
-		size=`cat $file|grep "test.264"|awk '{print $1}'`
+		x264_file=`echo $file_name|awk 'BEGIN{FS="_"}{print $3"_"$4"_"$5".264"}'`
+		size=`cat $file|grep $x264_file|awk '{print $1}'`
 		used_time=`cat $file|grep "real"|awk 'BEGIN{FS=" |\t|\n|m|s"}{print $2*60+$3}'`
 		echo -e $video"\t""x264""\t""\t"$bitrate"\t"$size"\t"$used_time
 	;;
