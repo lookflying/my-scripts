@@ -8,7 +8,7 @@ function test_log
 		if [ -f $5 ]
 		then
 			logfile=`./get_parameters.sh $2 $3 $5`
-			parameters=$5" "`./get_parameters.sh $2`
+			parameters=$5" "`./get_parameters.sh $2 $5`
 		else
 			logfile=`./get_parameters.sh $2 $3`
 			parameters=`./get_parameters.sh $2`
