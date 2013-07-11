@@ -35,7 +35,6 @@ then
 		if [ -f $2 ]
 		then
 			bitrate=`cat $2|grep "TargetBitrate"|awk '{print $3}'`
-			echo $bitrate
 			if [ -z $bitrate ]
 			then
 				bitrate=`echo "$width * $height * $fps * $motion_rate * 0.07 / 1000" | bc`
