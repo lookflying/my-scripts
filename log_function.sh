@@ -49,7 +49,7 @@ function print_log2(){
 
 function save_log(){
     echo -ne "\n" >> $log_temp
-    description=${1##*./}
+    description=${1##*/}
     runday=`date +%Y%m%d`
     runtime=`date +%H%M%S`
     last_log_file=$runday-$runtime-$description.log

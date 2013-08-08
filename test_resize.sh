@@ -9,5 +9,7 @@ file=$1
 name=${file##*/}
 name=${name%%.*}
 suffix=${file##*.}
-convert $file -resize 50% $dir/$name-$$.$suffix
+m_size=`./size_helper.sh $file m`
+t_size=`./size_helper.sh $file t`
+convert -size $m_size -scale $t_size $file $dir/$name-$$.$suffix
 
