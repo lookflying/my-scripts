@@ -28,8 +28,8 @@ else
 	    echo -e $ECHO_PREFIX_ERROR "This script must be run as root!" 1>&2
 	    exit 1
 	fi
+	xauthority=`ps aux|grep '/[u]sr/bin/X'|awk 'BEGIN{FS="-auth "}{print $2}'|awk '{print $1}'`
 	
-	xauthority=`ps aux|grep "/usr/bin/X"|awk '{print $14}'`
 	if [ -f $xauthority ]
 	then
 		try_command cp $xauthority /root/.Xauthority
