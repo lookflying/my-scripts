@@ -16,7 +16,10 @@ then
 	dir=$1
 	for result in `ls $dir|sort -V`
 	do
-		echo -n -e $result"\t"
-		report_usage_bandwidth $dir/$result
+		if [ -d $dir/$result ]
+		then
+			echo -n -e $result"\t"
+			report_usage_bandwidth $dir/$result
+		fi
 	done
 fi
