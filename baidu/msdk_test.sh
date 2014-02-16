@@ -13,5 +13,5 @@ height=$3
 bitrate=$4
 name=${file##*/}
 name=${name%.h264}
-log_file=$name"_"$width"x"$height"_"$bitrate"k".log
-$transcode -i::h264 $file -o::h264 $target_dir/$name"_"$width"x"$height"_"$bitrate"k".h264 -b $bitrate -w $width -h $height -hw -f 30|tee $log_file
+log_file=$name"_"$width"x"$height"_"$bitrate"k"_$$.log
+$transcode -i::h264 $file -o::h264 $target_dir/$name"_"$width"x"$height"_"$bitrate"k".h264 -b $bitrate -w $width -h $height -hw -f 30 &> $log_file
