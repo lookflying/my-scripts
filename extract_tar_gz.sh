@@ -24,9 +24,8 @@ then
 						fi
 						echo "make dir $dir"
 						mkdir $dir
-						cd $dir
 						echo "exact file $file"
-						tar xzf $file
+						tar xzf $file -C $dir
 					fi
 				fi
 			fi
