@@ -10,15 +10,20 @@ then
 fi
 if [ ! $# -eq 1 ]
 then
-	echo 'usage: $0 <img>'
+	echo 'umount and clean'
+	mountpoint $mnt_boot &>/dev/null &&	umount $mnt_boot 2>/dev/null
+	test -d $mnt_boot && rm -r $mnt_boot 
+	mountpoint $mnt_root &>/dev/null && umount $mnt_root 2>/dev/null 
+	test -d $mnt_root && rm -r $mnt_root 
 else
 	image=$1
-	mountpoint $mnt_boot >/dev/null &&	umount $mnt_boot 2>/dev/null
-	rm -r $mnt_boot 
+	echo "mount $image"
+	mountpoint $mnt_boot &>/dev/null &&	umount $mnt_boot 2>/dev/null
+	test -d $mnt_boot && rm -r $mnt_boot 
 	mkdir $mnt_boot
 	mount -o loop,rw,offset=$boot_offset $image $mnt_boot
-	mountpoint $mnt_root >/dev/null && umount $mnt_root 2>/dev/null 
-	rm -r $mnt_root 
+	mountpoint $mnt_root &>/dev/null && umount $mnt_root 2>/dev/null 
+	test -d $mnt_root && rm -r $mnt_root 
 	mkdir $mnt_root
 	mount -o loop,rw,offset=$root_offset $image $mnt_root
 fi
