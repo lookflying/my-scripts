@@ -3,18 +3,34 @@ mnt_boot=boot
 boot_offset=34603008
 root_offset=571473920
 mnt_root=root
+function check()
+{
+	if [ $1 -ne 0 ]
+	then
+		echo failed!
+		exit 1
+	fi
+}
 if [ $EUID -ne 0 ]
 then
-	echo 'You need to be root or use sudo'
+	echo -n 'You need to be root or use sudo'
 	exit 1
 fi
 if [ ! $# -eq 1 ]
 then
 	echo 'umount and clean'
-	mountpoint $mnt_boot &>/dev/null &&	umount $mnt_boot 2>/dev/null
-	test -d $mnt_boot && rm -r $mnt_boot 
-	mountpoint $mnt_root &>/dev/null && umount $mnt_root 2>/dev/null 
-	test -d $mnt_root && rm -r $mnt_root 
+	if [ -d $mnt_boot ]
+	then
+		mountpoint $mnt_boot &>/dev/null &&	umount $mnt_boot 2>/dev/null
+		check $?
+		rm -r $mnt_boot 
+	fi
+	if [ -d $mnt_root ]
+	then
+		mountpoint $mnt_root &>/dev/null && umount $mnt_root 2>/dev/null 
+		check $?
+		rm -r $mnt_root 
+	fi
 else
 	image=$1
 	echo "mount $image"
