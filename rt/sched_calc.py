@@ -19,7 +19,7 @@ if (len(sys.argv) == 3):
 	if (not os.path.isfile(name) or not is_number(period)):
 		usage()
 	else:
-		print "filename=", name, "\tperiod=", period
+	#	print "filename=", name, "\tperiod=", period
 		begin = 0
 		end = 0
 		count = 0
