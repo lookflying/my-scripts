@@ -16,4 +16,5 @@ kill -2 $!
 #trace-cmd stop
 #trace-cmd extract -o $logpath/trace.dat
 #trace-cmd reset
+wait
 echo finished from $$

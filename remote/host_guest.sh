@@ -5,6 +5,20 @@ pull=0
 clean=0
 host_dir="host"
 guest_dir="guest"
+latest_dir="latest"
+function set_latest()
+{
+	if [ $# -eq 1 ]
+	then
+		name=$1
+		wd=`pwd`
+		latest_host=`find $wd/$host_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
+		latest_guest=`find $wd/$guest_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
+		rm -f  $latest_dir/$name"_host_latest" $latest_dir/$name"_guest_latest"
+		ln -s $latest_host $latest_dir/$name"_host_latest"
+		ln -s $latest_guest $latest_dir/$name"_guest_latest"
+	fi
+}
 while getopts :u:h:g:s:d:xp:c: opt
 do
 	case $opt in
@@ -78,11 +92,12 @@ elif [ $pull -eq 1 ]
 		mkdir -p $guest_dir
 		rsync -av $user@$host:$working_directory/$log_script"_*" $host_dir
 		rsync -av $user@$guest:$working_directory/$log_script"_*" $guest_dir
+		set_latest $log_script
 	fi
 	if [ $clean -eq 1 ]
 	then
-		ssh $user@$host "find $working_directory -maxdepth 1 -type d -name $log_script\\* -exec rm -r {} \\;"	
-		ssh $user@$guest "find $working_directory -maxdepth 1 -type d -name $log_script\\* -exec rm -r {} \\;"	
+		ssh $user@$host "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec rm -r {} \\;"	
+		ssh $user@$guest "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec rm -r {} \\;"	
 	fi
 else
 	echo "usage:"
