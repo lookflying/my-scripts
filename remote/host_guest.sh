@@ -10,6 +10,7 @@ function set_latest()
 {
 	if [ $# -eq 1 ]
 	then
+		mkdir -p $latest_dir
 		name=$1
 		wd=`pwd`
 		latest_host=`find $wd/$host_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
