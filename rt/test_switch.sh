@@ -8,8 +8,12 @@ logpath=$path/$testname"_"$count"_"$testtime
 echo $count
 PATH=$PATH:`pwd`
 mkdir $logpath
-trace-cmd start -e "sched_switch"
+#trace-cmd start -e "sched_switch"
+trace-cmd record -e "sched_switch" -o $logpath/trace.dat &
+tracepid=$!
 sleep 30
-trace-cmd stop
-trace-cmd extract -o $logpath/trace.dat
-trace-cmd reset
+kill -2 $!
+#trace-cmd stop
+#trace-cmd extract -o $logpath/trace.dat
+#trace-cmd reset
+echo finished from $$
