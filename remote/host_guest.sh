@@ -14,13 +14,13 @@ function set_latest()
 		name=$1
 		wd=`pwd`
 		latest_host=`find $wd/$host_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
-		latest_guest=`find $wd/$guest_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
+		test -n "$guest" && latest_guest=`find $wd/$guest_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
 		rm -f  $latest_dir/$name"_host_latest" $latest_dir/$name"_guest_latest"
 		ln -s $latest_host $latest_dir/$name"_host_latest"
-		ln -s $latest_guest $latest_dir/$name"_guest_latest"
+		test -n "$guest" && ln -s $latest_guest $latest_dir/$name"_guest_latest"
 	fi
 }
-while getopts :u:h:g:s:d:xp:c: opt
+while getopts :u:h:g:s:d:xp:c:a: opt
 do
 	case $opt in
 	u) 
@@ -59,6 +59,11 @@ do
 		log_to_clean=$OPTARG
 		log_to_clean=${log_to_clean%.*}
 		;;
+	a)
+		echo "script arguments"
+		arguments=$OPTARG
+		echo "arguments = $arguments"
+		;;
 	esac
 done
 
@@ -71,34 +76,33 @@ do
 	count=$[ $count + 1 ]
 	
 done
-
-if [ -n "$user" ] && [ -n "$host" ] && [ -n "$guest" ]
+if [ -n "$user" ] #&& [ -n "$host" ] && [ -n "$guest" ]
 then
 	echo "start working"	
 	ssh $user@$host "mkdir -p $working_directory"
-	ssh $user@$guest "mkdir -p $working_directory"
+	test -n "$guest" &&	ssh $user@$guest "mkdir -p $working_directory"
 	if [ $pull -eq 0 ] && [ -n "$script" ]
 	then
 		rsync -av $script $user@$host:$working_directory
-		rsync -av $script $user@$guest:$working_directory
+		test -n "$guest" && rsync -av $script $user@$guest:$working_directory
 			if [ $executing -eq 1 ]
 		then
-			ssh $user@$host "$working_directory/$script" &
-			ssh $user@$guest "$working_directory/$script" &
+			ssh $user@$host "$working_directory/$script $arguments" &
+			test -n "$guest" && ssh $user@$guest "$working_directory/$script $arguments" &
 			wait
 		fi
 elif [ $pull -eq 1 ]
 	then
 		mkdir -p $host_dir
-		mkdir -p $guest_dir
+		test -n "$guest" && mkdir -p $guest_dir
 		rsync -av $user@$host:$working_directory/$log_script"_*" $host_dir
-		rsync -av $user@$guest:$working_directory/$log_script"_*" $guest_dir
+		test -n "$guest" && rsync -av $user@$guest:$working_directory/$log_script"_*" $guest_dir
 		set_latest $log_script
 	fi
 	if [ $clean -eq 1 ]
 	then
 		ssh $user@$host "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec rm -r {} \\;"	
-		ssh $user@$guest "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec rm -r {} \\;"	
+		test -n "$guest" && ssh $user@$guest "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec rm -r {} \\;"	
 	fi
 else
 	echo "usage:"
@@ -110,4 +114,5 @@ else
 	echo -e "\t-x execute the script"
 	echo -e "\t-p pull the logs of specified script"
 	echo -e "\t-c clean the logs of specified script"
+	echo -e "\t-a arguments to the script"
 fi

@@ -42,11 +42,12 @@ then
 		die_on_dmiss="-M"
 	fi
 	percentage=$step
+	mkdir -p $logpath
 	while [ $percentage -lt 100 ]
 	do
 		execution=`expr $period \* $percentage / 100`
 		echo "exec=$execution"
-		rt-app $die_on_dmiss -t $period:$execution:d -D $duration
+		rt-app $die_on_dmiss -t $period:$execution:d -D $duration -l $logpath -b $testname"_"$period"_"$execution
 		percentage=$[ $percentage + $step ]
 	done
 else
