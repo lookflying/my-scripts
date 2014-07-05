@@ -3,6 +3,15 @@ period=10000
 duration=30
 step=10
 hard=0
+
+testtime=`date +%Y%m%d%H%M%S`
+testname=`basename $0`
+testname=${testname%.*}
+path=`dirname $0`
+count=$[ `ls $path|grep $testname"_"|wc -l` + 1 ]
+logpath=$path/$testname"_"$count"_"$testtime
+
+
 while getopts :p:s:d:h opt
 do
 	case $opt in
