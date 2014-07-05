@@ -13,10 +13,11 @@ function set_latest()
 		mkdir -p $latest_dir
 		name=$1
 		wd=`pwd`
-		latest_host=`find $wd/$host_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
+		test -n "$host" && latest_host=`find $wd/$host_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
 		test -n "$guest" && latest_guest=`find $wd/$guest_dir -maxdepth 1 -name $name\*|sort -V|tail -1`
-		rm -f  $latest_dir/$name"_host_latest" $latest_dir/$name"_guest_latest"
-		ln -s $latest_host $latest_dir/$name"_host_latest"
+		test -n "$host" && rm -f  $latest_dir/$name"_host_latest" 
+		test -n "$guest" && rm -f $latest_dir/$name"_guest_latest"
+		test -n "$host" && ln -s $latest_host $latest_dir/$name"_host_latest"
 		test -n "$guest" && ln -s $latest_guest $latest_dir/$name"_guest_latest"
 	fi
 }
@@ -79,31 +80,33 @@ done
 if [ -n "$user" ] 
 then
 	echo "start working"	
-	ssh $user@$host "mkdir -p $working_directory"
+	test -n "$host" && ssh $user@$host "mkdir -p $working_directory"
 	test -n "$guest" &&	ssh $user@$guest "mkdir -p $working_directory"
 	if [ -n "$script" ]
 	then
-		rsync -av $script $user@$host:$working_directory
+		test -n "$host" && rsync -av $script $user@$host:$working_directory
 		test -n "$guest" && rsync -av $script $user@$guest:$working_directory
 		if [ $executing -eq 1 ]
 		then
-			ssh $user@$host "$working_directory/$script $arguments" &
+			test -n "$host" && ssh $user@$host "$working_directory/$script $arguments" &
 			test -n "$guest" && ssh $user@$guest "$working_directory/$script $arguments" &
 			wait
 		fi
 	fi
 	if [ $pull -eq 1 ]
 	then
-		mkdir -p $host_dir
+		test -n "$host" && mkdir -p $host_dir
 		test -n "$guest" && mkdir -p $guest_dir
-		rsync -av $user@$host:$working_directory/$log_script"_*" $host_dir
+		test -n "$host" && rsync -av $user@$host:$working_directory/$log_script"_*" $host_dir
 		test -n "$guest" && rsync -av $user@$guest:$working_directory/$log_script"_*" $guest_dir
 		set_latest $log_script
 	fi
 	if [ $clean -eq 1 ]
 	then
-		ssh $user@$host "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec rm -r {} \\;"	
-		test -n "$guest" && ssh $user@$guest "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec rm -r {} \\;"	
+		test -n "$host" && echo "cleaning logs on $host"
+		test -n "$host" && ssh $user@$host "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec echo {} \; -exec rm -r {} \\;"	
+		test -n "$guest" && echo "cleaning logs on $guest"
+		test -n "$guest" && ssh $user@$guest "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec echo {} \; -exec rm -r {} \\;"	
 	fi
 else
 	echo "usage:"
