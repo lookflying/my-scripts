@@ -23,7 +23,7 @@ if [ $# -eq 1 ]
 then
 	dir=$1
 	simple_title
-	for log in `find $dir -maxdepth 1 -type f -name $logname\\*.log|sort -V`
+	for log in `find $dir/ -maxdepth 1 -type f -name $logname\\*.log|sort -V`
 	do
 		simple_miss_rate $log
 	done
