@@ -76,22 +76,23 @@ do
 	count=$[ $count + 1 ]
 	
 done
-if [ -n "$user" ] #&& [ -n "$host" ] && [ -n "$guest" ]
+if [ -n "$user" ] 
 then
 	echo "start working"	
 	ssh $user@$host "mkdir -p $working_directory"
 	test -n "$guest" &&	ssh $user@$guest "mkdir -p $working_directory"
-	if [ $pull -eq 0 ] && [ -n "$script" ]
+	if [ -n "$script" ]
 	then
 		rsync -av $script $user@$host:$working_directory
 		test -n "$guest" && rsync -av $script $user@$guest:$working_directory
-			if [ $executing -eq 1 ]
+		if [ $executing -eq 1 ]
 		then
 			ssh $user@$host "$working_directory/$script $arguments" &
 			test -n "$guest" && ssh $user@$guest "$working_directory/$script $arguments" &
 			wait
 		fi
-elif [ $pull -eq 1 ]
+	fi
+	if [ $pull -eq 1 ]
 	then
 		mkdir -p $host_dir
 		test -n "$guest" && mkdir -p $guest_dir
