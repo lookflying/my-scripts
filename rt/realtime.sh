@@ -52,7 +52,7 @@ then
 	done
 else
 	echo "usage"
-	echo -e "\t-p period(in millisecond), default $period"
+	echo -e "\t-p period(in microsecond), default $period"
 	echo -e "\t-s step(in percentage), default $step"
 	echo -e "\t-d duration(in second), default $duration"
 	echo -e "\t-h hard realtime(exit when miss deadline), default $hard"
