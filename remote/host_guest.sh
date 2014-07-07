@@ -21,7 +21,7 @@ function set_latest()
 		test -n "$guest" && ln -s $latest_guest $latest_dir/$name"_guest_latest"
 	fi
 }
-while getopts :u:h:g:s:d:xp:c:a: opt
+while getopts :u:h:g:s:d:xp:c:a:r: opt
 do
 	case $opt in
 	u) 
@@ -64,6 +64,10 @@ do
 		echo "script arguments"
 		arguments=$OPTARG
 		echo "arguments = $arguments"
+		;;
+	r)
+		echo "get result dir $OPTARG"
+		result=$OPTARG	
 		;;
 	esac
 done
@@ -108,15 +112,27 @@ then
 		test -n "$guest" && echo "cleaning logs on $guest"
 		test -n "$guest" && ssh $user@$guest "find $working_directory -maxdepth 1 -type d -name $log_to_clean\\* -exec echo {} \; -exec rm -r {} \\;"	
 	fi
+	if [ -n "$result" ]
+	then
+		if [ -n "$guest" ]
+		then
+			rsync -av $user@$guest:/$working_directory/$result/ $result
+		elif [ -n "$host" ]
+		then
+			rsync -av $user@$host:/$working_directory/$result/ $result
+		fi
+	fi
 else
 	echo "usage:"
-	echo -e "\t-u user(both host and guest)"
-	echo -e "\t-h host ip"
-	echo -e "\t-g guest ip"
-	echo -e "\t-s script file"
-	echo -e "\t-d working directory"
-	echo -e "\t-x execute the script"
-	echo -e "\t-p pull the logs of specified script"
-	echo -e "\t-c clean the logs of specified script"
-	echo -e "\t-a arguments to the script"
+	echo -e "\t-u\tuser(both host and guest)"
+	echo -e "\t-h\thost ip"
+	echo -e "\t-g\tguest ip"
+	echo -e "\t-s\tscript file"
+	echo -e "\t-d\tworking directory"
+	echo -e "\t-x\texecute the script"
+	echo -e "\t-p\tpull the logs of specified script"
+	echo -e "\t-c\tclean the logs of specified script"
+	echo -e "\t-a\targuments to the script"
+	echo -e "\t-r\tget specified result dir,"
+	echo -e "\t\tif guest is provided, then get from guest, otherwise from host"
 fi
