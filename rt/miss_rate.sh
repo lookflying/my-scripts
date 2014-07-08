@@ -15,7 +15,7 @@ function simple_miss_rate()
 		period=${name#*_}
 		period=${period%%_*}
 		echo -n -e "$period\t$execution\t"
-		cat $file|awk 'BEGIN{count=0;miss=0}{if($1==0){if($10<0){miss+=1}count+=1}}END{print count"\t"miss"\t"miss/count}'
+		cat $file|awk 'BEGIN{count=0;miss=0}{if($1==0){if($10<0){miss+=1}count+=1}}END{if(count==0){rate=1}else{rate=miss/count};print count"\t"miss"\t"rate}'
 	fi
 }
 
