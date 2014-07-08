@@ -10,6 +10,7 @@ function get_qemu_tid()
 	fi	
 }
 working_directory=`pwd`
+testdir="vm"
 user=$USER
 busy=0
 
@@ -53,7 +54,7 @@ done
 
 if [ -n "$guest" ] && [ -n "$step" ] && [ -n "$guest_script" ] && [ -n "$period" ] && [ -n "$arguments" ]
 then
-	ssh $user@$guest "mkdir -p $working_directory"
+	ssh $user@$guest "mkdir -p $working_directory"/$testdir
 
 	percentage=$step
 	if [ $busy -eq 1 ]
@@ -66,11 +67,11 @@ then
 		execution=`expr $period \* $percentage / 100`
 		echo "vm deadline $period:$execution"
 		set_deadline `get_qemu_tid` $period:$execution
-		sleep 5
+		sleep 3
 		testname=$period"_"$execution
-		ssh $user@$guest "mkdir -p $working_directory/$testname"
-		rsync -av $guest_script $user@$guest:/$working_directory/$testname
-		ssh $user@$guest "$working_directory/$testname/$guest_script $arguments"
+		ssh $user@$guest "mkdir -p $working_directory/$testdir/$testname"
+		rsync -av $guest_script $user@$guest:/$working_directory/$testdir/$testname
+		ssh $user@$guest "$working_directory/$testdir/$testname/$guest_script $arguments"
 
 		percentage=$[ $percentage + $step ]	
 	done
