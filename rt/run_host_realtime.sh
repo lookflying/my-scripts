@@ -32,6 +32,7 @@ then
 	stress --cpu $cpunum &
 fi
 
+mkdir $logpath
 cd $logpath
 cp $realtime_script $logpath
 $realtime -p 10000 -s 10 -d 20 -h
