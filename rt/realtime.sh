@@ -48,7 +48,7 @@ then
 	fi
 	percentage=$step
 	mkdir -p $logpath
-	while [ $percentage -le $top]
+	while [ $percentage -le $top ]
 	do
 		execution=`expr $period \* $percentage / 100`
 		echo "exec=$execution"
