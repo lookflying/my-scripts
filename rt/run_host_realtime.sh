@@ -11,7 +11,7 @@ realtime_script="$path/realtime.sh"
 realtime="./realtime.sh"
 
 busy=0
-while getopts :b:h opt
+while getopts :bh opt
 do
 	case $opt in
 	b)
@@ -33,8 +33,8 @@ then
 fi
 
 mkdir $logpath
-cd $logpath
 cp $realtime_script $logpath
+cd $logpath
 $realtime -p 10000 -s 10 -d 20 -h
 $realtime -p 20000 -s 10 -d 20 -h
 $realtime -p 50000 -s 10 -d 20 -h
