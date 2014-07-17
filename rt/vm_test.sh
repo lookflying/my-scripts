@@ -13,8 +13,9 @@ working_directory=`pwd`
 testdir="vm"
 user=$USER
 busy=0
+trace=0
 
-while getopts :u:g:d:s:p:a:x:b opt
+while getopts :u:g:d:s:p:a:x:bt opt
 do
 	case $opt in
 	g)
@@ -49,6 +50,10 @@ do
 		echo "keep host busy(stress)"
 		busy=1
 		;;
+	t)
+		echo "enable ftrace"
+		trace=1
+		;;
 	esac
 done
 
@@ -57,6 +62,14 @@ then
 	ssh $user@$guest "mkdir -p $working_directory"/$testdir
 
 	percentage=$step
+
+	if [ $trace -eq 1 ]
+	then
+		mkdir -p $testdir
+		testtime=`date +%Y%m%d%H%M%S`
+		trace-cmd record -e "sched_switch" -o $testdir/$testtime.dat &
+		traceid=$!
+	fi
 	if [ $busy -eq 1 ]
 	then
 		cpunum=`cat /proc/cpuinfo|grep processor|wc -l`
@@ -71,13 +84,22 @@ then
 		ssh $user@$guest "mkdir -p $working_directory/$testdir/$testname"
 		rsync -av $guest_script $user@$guest:/$working_directory/$testdir/$testname
 		sleep 4
-		ssh $user@$guest "$working_directory/$testdir/$testname/$guest_script $arguments"
+		if [ $trace -eq 1 ]
+		then
+			ssh $user@$guest "cd $working_directory/$testdir/$testname; trace-cmd record -e \"sched_switch\" $working_directory/$testdir/$testname/$guest_script $arguments"
+		else
+			ssh $user@$guest "$working_directory/$testdir/$testname/$guest_script $arguments"
+		fi
 
 		percentage=$[ $percentage + $step ]	
 	done
 	if [ $busy -eq 1 ]
 	then
 		killall stress
+	fi
+	if [ $trace -eq 1 ]
+	then
+		kill -2 $traceid
 	fi
 	wait
 else
