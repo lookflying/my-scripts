@@ -67,7 +67,6 @@ then
 	then
 		mkdir -p $working_directory/$testdir
 		testtime=`date +%Y%m%d%H%M%S`
-		trace-cmd record -e "sched_switch" -o 
 		trace-cmd record -e "sched_switch" -e "sched_wakeup" -o $working_directory/$testdir/$testtime.dat & 
 		traceid=$!
 	fi
