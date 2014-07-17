@@ -67,7 +67,8 @@ then
 	then
 		mkdir -p $working_directory/$testdir
 		testtime=`date +%Y%m%d%H%M%S`
-		trace-cmd record -e "sched_switch" -o $working_directory/$testdir/$testtime.dat &
+		trace-cmd record -e "sched_switch" -o 
+		trace-cmd record -e "sched_switch" -e "sched_wakeup" -o $working_directory/$testdir/$testtime.dat & 
 		traceid=$!
 	fi
 	if [ $busy -eq 1 ]
@@ -86,7 +87,7 @@ then
 		sleep 4
 		if [ $trace -eq 1 ]
 		then
-			ssh $user@$guest "cd $working_directory/$testdir/$testname; trace-cmd record -e \"sched_switch\" -o $working_directory/$testdir/$testname/$testtime.dat $working_directory/$testdir/$testname/$guest_script $arguments"
+			ssh $user@$guest "cd $working_directory/$testdir/$testname; trace-cmd record -e \"sched_switch\" -e \"sched_wakeup\" -o $working_directory/$testdir/$testname/$testtime.dat $working_directory/$testdir/$testname/$guest_script $arguments"
 		else
 			ssh $user@$guest "$working_directory/$testdir/$testname/$guest_script $arguments"
 		fi
