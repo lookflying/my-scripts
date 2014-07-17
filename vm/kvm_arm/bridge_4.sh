@@ -2,7 +2,7 @@
 # bridge.sh
 
 ifconfig|grep br0 || brctl addbr br0
-while [ `ifconfig|grep tap|wc -l` -lt 4 ]
+while [ `ip link|grep tap|wc -l` -lt 4 ]
 do
 tunctl -u root
 done
