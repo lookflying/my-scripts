@@ -7,7 +7,7 @@ function latest_miss_rate()
 		host_dir=$1
 		latest=`find $host_dir -mindepth 1 -maxdepth 1 -type d|sort -V|tail -1`
 		echo $latest
-		$miss_rate $latest
+		$miss_rate $latest 20
 	fi
 }
 
@@ -19,7 +19,7 @@ function num_miss_rate()
 			num=$2	
 			latest=`find $host_dir -mindepth 1 -maxdepth 1 -type d|sort -V|head -$num|tail -1`
 			echo $latest
-			$miss_rate $latest
+			$miss_rate $latest 20
 		fi
 }
 
