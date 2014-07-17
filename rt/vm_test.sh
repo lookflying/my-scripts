@@ -67,10 +67,10 @@ then
 		execution=`expr $period \* $percentage / 100`
 		echo "vm deadline $period:$execution"
 		set_deadline `get_qemu_tid` $period:$execution
-		sleep 3
 		testname=$period"_"$execution
 		ssh $user@$guest "mkdir -p $working_directory/$testdir/$testname"
 		rsync -av $guest_script $user@$guest:/$working_directory/$testdir/$testname
+		sleep 4
 		ssh $user@$guest "$working_directory/$testdir/$testname/$guest_script $arguments"
 
 		percentage=$[ $percentage + $step ]	
