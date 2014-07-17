@@ -65,7 +65,7 @@ then
 
 	if [ $trace -eq 1 ]
 	then
-		mkdir -p $testdir
+		mkdir -p $working_directory/$testdir
 		testtime=`date +%Y%m%d%H%M%S`
 		trace-cmd record -e "sched_switch" -e "sched_wakeup" -o $testdir/$testtime.dat &
 		traceid=$!
