@@ -22,7 +22,6 @@ try:
 	opts,arg = getopt.gnu_getopt(sys.argv, "f:", ["help", "grammar="])
 except getopt.GetoptError as err:
 	print str(err)
-	usage()
 	sys.exit(2)
 for o, a in opts:
 	if o == "-f":
