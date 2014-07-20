@@ -9,8 +9,8 @@ import requests
 import hashlib
 url = "http://pictrail.tk/interface/"
 #url = "http://203.195.155.219/interface/"
-cmd = "raise"
-username = "comment"
+cmd = "comment"
+username = "pictrail"
 #password = "pictrailAdmin"
 #location = "Shanghai"
 #longitude = "121.496595"
@@ -19,7 +19,7 @@ username = "comment"
 #start_idx = 3
 #refresh_count = 5
 #detail = "I Love Shanghai"
-pic_index = 2 
+pic_index = 3 
 #action = 1
 comment = "good picture"
 register_openers()
