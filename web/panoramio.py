@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import requests
 import sys
+import getopt
 url="http://www.panoramio.com/map/get_panoramas.php"
 
 try:
