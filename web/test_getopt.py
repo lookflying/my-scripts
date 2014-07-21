@@ -6,6 +6,7 @@ try:
 	opts,args = getopt.gnu_getopt(sys.argv, "h", ["longitude=", "latitude=", "from=", "to=",])
 except getopt.GetoptError as err:
 	print str(err)
+	sys.exit(2)
 for opt, arg in opts:
 	if opt == "--longitude":
 		longitude = arg
