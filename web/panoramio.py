@@ -5,6 +5,11 @@ import getopt
 import json
 from decimal import Decimal
 import os
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
+import urllib2
+
+
 url="http://www.panoramio.com/map/get_panoramas.php"
 
 from_idx = 0
@@ -12,6 +17,31 @@ to_idx = 20
 
 longitude = 121.502488
 latitude = 31.246075
+
+register_openers()
+
+def upload_pic_in_json(json_file):
+	with open(json_file, "rb+") as in_file:
+		json_data = json.loads(in_file.read())
+		if json_data.has_key('photos'):
+				for photo in json_data['photos']:
+#					print photo['photo_title']
+					upload_json = {
+						'cmd': 'publishPic',
+						'username': 'pictrail',
+						'longitude': photo['longitude'],
+						'latitude': photo['latitude'],
+						'location': photo['photo_title'],
+						'detail': photo['photo_title'],
+						'time': photo['upload_date'],
+					}			
+					filename = os.path.basename(photo['photo_file_url'])
+					if os.path.isfile(filename):
+						print "upload " + filename
+						datagen, headers = multipart_encode({"uploadFile": open(filename, "rb"), "JSON": json.dumps(upload_json)})
+						request = urllib2.Request(upload_url, datagen, headers)
+						print urllib2.urlopen(request).read()
+
 
 try:
 	opts,args = getopt.gnu_getopt(sys.argv, "h", ["longitude=", "latitude=", "from=", "to=", "coordinate="])
@@ -62,6 +92,9 @@ if data.has_key('photos'):
 			print photo['photo_title']
 			pic_url = photo['photo_file_url']
 			os.system('wget -N ' + pic_url	)
-			
-with open(str(longitude) + "_" + str(latitude) + "_" + str(from_idx) + "_" + str(to_idx) + "_" + str(actual_count) + ".json", 'wb+') as outfile:
+
+json_file_name = str(longitude) + "_" + str(latitude) + "_" + str(from_idx) + "_" + str(to_idx) + "_" + str(actual_count) + ".json"
+with open(json_file_name, 'wb+') as outfile:
 	outfile.write(r.text)
+
+upload_pic_in_json(json_file_name)

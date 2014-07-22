@@ -11,7 +11,7 @@ import urllib2
 
 json_file = False
 json_dir = False
-url = 'http://pictrail.tk/interface/manage/'
+upload_url = 'http://pictrail.tk/interface/manage/'
 
 def upload_pic_in_json(json_file):
 	with open(json_file, "rb+") as in_file:
@@ -32,7 +32,7 @@ def upload_pic_in_json(json_file):
 					if os.path.isfile(filename):
 						print "upload " + filename
 						datagen, headers = multipart_encode({"uploadFile": open(filename, "rb"), "JSON": json.dumps(upload_json)})
-						request = urllib2.Request(url, datagen, headers)
+						request = urllib2.Request(upload_url, datagen, headers)
 						print urllib2.urlopen(request).read()
 
 
@@ -75,5 +75,5 @@ elif json_file:
 #					if os.path.isfile(filename):
 #						print "upload " + filename
 #						datagen, headers = multipart_encode({"uploadFile": open(filename, "rb"), "JSON": json.dumps(upload_json)})
-#						request = urllib2.Request(url, datagen, headers)
+#						request = urllib2.Request(upload_url, datagen, headers)
 #						print urllib2.urlopen(request).read()
