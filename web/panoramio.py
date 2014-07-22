@@ -32,10 +32,10 @@ for opt, arg in opts:
 		longitude = cdt_str[0]
 		latitude = cdt_str[1]
 
-minx = Decimal(longitude) - Decimal(0.01)
-miny = Decimal(latitude) - Decimal(0.01)
-maxx = Decimal(longitude) + Decimal(0.01)
-maxy = Decimal(latitude) + Decimal(0.01)
+minx = Decimal(longitude) - Decimal(0.001)
+miny = Decimal(latitude) - Decimal(0.001)
+maxx = Decimal(longitude) + Decimal(0.001)
+maxy = Decimal(latitude) + Decimal(0.001)
 
 
 params={
