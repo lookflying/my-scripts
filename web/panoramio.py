@@ -11,7 +11,7 @@ import urllib2
 
 
 url="http://www.panoramio.com/map/get_panoramas.php"
-
+upload_url="http://pictrail.tk/interface/manage/"
 from_idx = 0
 to_idx = 20
 
