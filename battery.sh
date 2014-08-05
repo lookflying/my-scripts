@@ -29,13 +29,13 @@ then
 			fi
 			if [ -n "$temp" ]
 			then
-				temp_degree=`echo "scale=1; $temp"|bc`
+				temp_degree=`echo "scale=1; $temp/10"|bc`
 				echo -n -e  "temp: $temp_degree\t"		
 			fi
 			if [ -n "$time_to_empty_avg" ]
 			then
 				remaining_hour=`echo "scale=2; $time_to_empty_avg/60/60"|bc`
-				echo -n -e  "remaining: $remaining_hourhour\t"		
+				echo -n -e  "remaining: $remaining_hour\t"		
 			fi
 			echo -n -e "\n"
 		fi
