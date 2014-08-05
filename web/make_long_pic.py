@@ -11,7 +11,7 @@ url = "http://pictrail.tk/interface/"
 #url = "http://203.195.155.219/interface/"
 cmd = "makeLongPic"
 username = "pictrail"
-selected_pic = [{'no': 2, 'picIndex': 1},{'no': 1, 'picIndex': 2}, ]
+selected_pic = [{'no': 0, 'picIndex': 304},{'no': 1, 'picIndex': 305}, ]
 
 register_openers()
 
