@@ -14,8 +14,8 @@ testdir="vm"
 user=$USER
 busy=0
 trace=0
-
-while getopts :u:g:d:s:p:a:x:bt opt
+host=0
+while getopts :u:g:d:s:p:a:x:bth: opt
 do
 	case $opt in
 	g)
@@ -54,6 +54,13 @@ do
 		echo "enable ftrace"
 		trace=1
 		;;
+	h)
+		echo "host rt-app"
+		host=1
+		host_rt_arg=$OPTARG
+		host_period=${host_rt_arg%:*}
+		host_exec=${host_rt_arg#:*}
+		;;
 	esac
 done
 
@@ -67,8 +74,15 @@ then
 	then
 		mkdir -p $working_directory/$testdir
 		testtime=`date +%Y%m%d%H%M%S`
-		trace-cmd record -e "sched_switch" -e "sched_wakeup" -o $working_directory/$testdir/$testtime.dat & 
-		traceid=$!
+		if [ $host -eq 1 ]
+		then
+			
+			trace-cmd record -e "sched_switch" -e "sched_wakeup" -o $working_directory/$testdir/$testtime.dat rt-app -t $host_rt_arg -l $working_directory/$testdir/ -b $host_period"_"$host_exec"_"$testtime  & 
+			traceid=$!
+		else
+			trace-cmd record -e "sched_switch" -e "sched_wakeup" -o $working_directory/$testdir/$testtime.dat & 
+			traceid=$!
+		fi
 	fi
 	if [ $busy -eq 1 ]
 	then
@@ -97,6 +111,10 @@ then
 	then
 		killall stress
 	fi
+	if [ $host -eq 1 ]
+	then
+		killall rt-app
+	fi
 	if [ $trace -eq 1 ]
 	then
 		kill -2 $traceid
@@ -112,4 +130,5 @@ else
 	echo -e "\t-a guest script arguments"
 	echo -e "\t-u user"
 	echo -e "\t-b keep host busy"
+	echo -e "\t-h host run rt-app"
 fi
