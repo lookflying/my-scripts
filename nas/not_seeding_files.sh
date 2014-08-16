@@ -23,7 +23,7 @@ if [ $# -eq 2 ]
 then
 	if [ -f $1 ] && [ -f $2 ]
 	then
-		grep_files_in_torrents #@
+		grep_files_in_torrents $@
 	elif [ -d $1 ] && [ -d $2 ]
 	then
 		flist=`mktempi /tmp/temp.XXXXXX`
