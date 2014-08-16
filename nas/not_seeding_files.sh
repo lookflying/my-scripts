@@ -4,10 +4,8 @@ function usage()
 	echo usage: $0 files.list torrents.list
 	echo usage: $0 files_dir	torrents_dir
 }
-if [ $# -eq 2 ]
-then
-	if [ -f $1 ] && [ -f $2 ]
-	then
+function grep_files_in_torrents()
+{
 		flist=$1
 		tlist=$2
 		cat $flist | \
@@ -20,21 +18,19 @@ then
 				echo $f
 			fi
 		done
+}
+if [ $# -eq 2 ]
+then
+	if [ -f $1 ] && [ -f $2 ]
+	then
+		grep_files_in_torrents #@
 	elif [ -d $1 ] && [ -d $2 ]
 	then
-		flist=`ls $1`
-		tlist=`mktemp`
+		flist=`mktempi /tmp/temp.XXXXXX`
+		tlist=`mktempi /tmp/temp.XXXXXX`
+		ls $1 > $flist
 		ls $2 > $tlist
-		echo $flist | \
-		while read f
-		do
-			f="${f%/}"
-			grep "$f" $tlist &>/dev/null
-			if [ $? -ne 0 ]
-			then
-				echo $f
-			fi
-		done
+		grep_files_in_torrents $flist $tlist
 	else
 		usage $@		
 	fi
