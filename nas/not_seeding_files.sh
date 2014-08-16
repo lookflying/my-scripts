@@ -26,10 +26,10 @@ then
 		grep_files_in_torrents $@
 	elif [ -d $1 ] && [ -d $2 ]
 	then
-		flist=`mktempi /tmp/temp.XXXXXX`
-		tlist=`mktempi /tmp/temp.XXXXXX`
-		ls $1 > $flist
-		ls $2 > $tlist
+		flist=`mktemp /tmp/temp.XXXXXX`
+		tlist=`mktemp /tmp/temp.XXXXXX`
+		ls $1 >$flist
+		ls $2 >$tlist
 		grep_files_in_torrents $flist $tlist
 	else
 		usage $@		
