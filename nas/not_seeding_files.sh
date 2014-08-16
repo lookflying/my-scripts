@@ -12,7 +12,7 @@ function grep_files_in_torrents()
 		while read f
 		do
 			f="${f%/}"
-			grep "$f" $tlist &>/dev/null
+			grep -F "$f" $tlist &>/dev/null
 			if [ $? -ne 0 ]
 			then
 				echo $f
