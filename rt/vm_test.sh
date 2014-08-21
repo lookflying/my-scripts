@@ -13,8 +13,9 @@ working_directory=`pwd`
 testdir="vm"
 user=$USER
 busy=0
-
-while getopts :u:g:d:s:p:a:x:b opt
+trace=0
+host=0
+while getopts :u:g:d:s:p:a:x:bth: opt
 do
 	case $opt in
 	g)
@@ -49,6 +50,17 @@ do
 		echo "keep host busy(stress)"
 		busy=1
 		;;
+	t)
+		echo "enable ftrace"
+		trace=1
+		;;
+	h)
+		echo "host rt-app"
+		host=1
+		host_rt_arg=$OPTARG
+		host_period=${host_rt_arg%:*}
+		host_exec=${host_rt_arg#:*}
+		;;
 	esac
 done
 
@@ -57,6 +69,21 @@ then
 	ssh $user@$guest "mkdir -p $working_directory"/$testdir
 
 	percentage=$step
+
+	if [ $trace -eq 1 ]
+	then
+		mkdir -p $working_directory/$testdir
+		testtime=`date +%Y%m%d%H%M%S`
+		if [ $host -eq 1 ]
+		then
+			
+			trace-cmd record -e "sched_switch" -e "sched_wakeup" -o $working_directory/$testdir/$testtime.dat rt-app -t $host_rt_arg -l $working_directory/$testdir/ -b $host_period"_"$host_exec"_"$testtime  & 
+			traceid=$!
+		else
+			trace-cmd record -e "sched_switch" -e "sched_wakeup" -o $working_directory/$testdir/$testtime.dat & 
+			traceid=$!
+		fi
+	fi
 	if [ $busy -eq 1 ]
 	then
 		cpunum=`cat /proc/cpuinfo|grep processor|wc -l`
@@ -67,17 +94,30 @@ then
 		execution=`expr $period \* $percentage / 100`
 		echo "vm deadline $period:$execution"
 		set_deadline `get_qemu_tid` $period:$execution
-		sleep 3
 		testname=$period"_"$execution
 		ssh $user@$guest "mkdir -p $working_directory/$testdir/$testname"
 		rsync -av $guest_script $user@$guest:/$working_directory/$testdir/$testname
-		ssh $user@$guest "$working_directory/$testdir/$testname/$guest_script $arguments"
+		sleep 4
+		if [ $trace -eq 1 ]
+		then
+			ssh $user@$guest "cd $working_directory/$testdir/$testname; trace-cmd record -e \"sched_switch\" -e \"sched_wakeup\" -o $working_directory/$testdir/$testname/$testtime.dat $working_directory/$testdir/$testname/$guest_script $arguments"
+		else
+			ssh $user@$guest "$working_directory/$testdir/$testname/$guest_script $arguments"
+		fi
 
 		percentage=$[ $percentage + $step ]	
 	done
 	if [ $busy -eq 1 ]
 	then
 		killall stress
+	fi
+	if [ $host -eq 1 ]
+	then
+		killall rt-app
+	fi
+	if [ $trace -eq 1 ]
+	then
+		kill -2 $traceid
 	fi
 	wait
 else
@@ -90,4 +130,5 @@ else
 	echo -e "\t-a guest script arguments"
 	echo -e "\t-u user"
 	echo -e "\t-b keep host busy"
+	echo -e "\t-h host run rt-app"
 fi

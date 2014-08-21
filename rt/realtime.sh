@@ -3,6 +3,7 @@ period=10000
 duration=30
 step=10
 hard=0
+top=99
 
 testtime=`date +%Y%m%d%H%M%S`
 testname=`basename $0`
@@ -12,7 +13,7 @@ count=$[ `ls $path|grep $testname"_"|wc -l` + 1 ]
 logpath=$path/$testname"_"$count"_"$testtime
 
 
-while getopts :p:s:d:h opt
+while getopts :p:s:d:ht: opt
 do
 	case $opt in
 	p)#period(in millisecond)
@@ -31,6 +32,10 @@ do
 		echo hard realtime
 		hard=1
 		;;
+	t)#top percentage
+		echo top="$OPTARG"
+		top=$OPTARG
+		;;
 	esac
 done
 
@@ -43,7 +48,7 @@ then
 	fi
 	percentage=$step
 	mkdir -p $logpath
-	while [ $percentage -lt 100 ]
+	while [ $percentage -le $top ]
 	do
 		execution=`expr $period \* $percentage / 100`
 		echo "exec=$execution"
