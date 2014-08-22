@@ -15,4 +15,6 @@ pid=`grep $pid_mark $log_file|awk '{print $1}'`
 #echo $pid
 
 trace-cmd report -w -F "sched:common_pid==$pid || next_pid== $pid"| sed /^$/d > $trace_log
-cat $trace_log|awk -v command=$command 'BEGIN{left=0;right=0}{if(match($0, "sched_switch")){if($NF != command){++left}else{++right}}}END{printf "left=%d, right=%d\n%s\n", left, right, $0}'
+#cat $trace_log|awk -v command=$command 'BEGIN{left=0;right=0}{if(match($0, "sched_switch")){if($NF != command){++left}else{++right}}}END{printf "left=%d, right=%d\n%s\n", left, right, $0}'
+#cat $trace_log|awk -v command=$command -v pid=$pid 'BEGIN{left=0;right=0;state=0;sum=0;last}{if(match($0, "sched_switch")){mid=index($0, "==>");pos=index($0, pid ":");if(pos < mid){++left;if(state==1){sum+=0}if(left==1){state=1}}else{++right}}}END{printf "left=%d, right=%d\n%s\n", left, right, $0}'
+cat $trace_log|awk -v command=$command -v pid=$pid 'BEGIN{left=0;right=0;state=0;sum=0;last}{if(match($0, "sched_switch")){ts=substr($3, 0, length($3));mid=index($0, "==>");pos=index($0, pid ":");if(pos < mid){++left;if(state==1){sum+=ts}if(left==1){state=1}}else{++right;if(state==1){sum-=ts}}}}END{printf "left=%d, right=%d, total = %f ses\n%s\n", left, right, sum, $0}'
