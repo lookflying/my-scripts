@@ -1,0 +1,65 @@
+#!/bin/bash
+taskscript=./run_rt_task.sh
+runlog="run.log"
+function run_task()
+{
+	period=$1
+	budget=$2
+	execute=$3
+	duration=$4
+	log=$5
+	dst=$6
+	taskname=$period"_"$budget"_"$execute"_"$duration
+	$taskscript -p$period -b$budget -e$execute -d$duration -l$log |tee /dev/shm/$runlog
+	rsync /dev/shm/*.log /dev/shm/*.dat $dst/$taskname
+	if [ $? -ne 0 ]
+	then
+		echo fail to rsync to $dst/$taskname @ `data +"%Y-%m-%d %H:%M:%S"`
+	fi
+}
+while getopts :f:l: opt
+do
+	case $opt in
+	f)
+		echo task list file = $OPTARG
+		listfile=$OPTARG
+		;;
+	l)
+		echo log destination = $OPTARG
+		logdst=$OPTARG
+	esac
+done
+
+if [ -n "$listfile" ] && [ -n "$logdst" ]
+then
+	list=${listfile%.*}
+	batchname=`date +%Y%m%d_%H%M%S_`$list
+	if [ ! -f $listfile ]
+	then
+		echo $listfile does not exist.
+		exit 1
+	fi
+	mkdir $batchname &>/dev/null
+	if [ $? -ne 0 ]
+	then
+		echo fail to mkdir $batchname
+		exit 1
+	fi
+	echo dir = $batchname
+	rsync -av $batchname $logdst &>/dev/null
+	if [ $? -ne 0 ]
+	then
+		echo can not access $logdst
+		exit 1
+	fi
+	rm -r $batchname
+	sed -n '/^#/!p' $listfile| \
+	while read line
+	do
+		run_task $line $logdst/$batchname
+	done
+else
+	echo "usage:"
+	echo -e "\t"-f"\t"task list file
+	echo -e "\t"-l"\t"log destination
+fi
