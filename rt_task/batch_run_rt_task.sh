@@ -53,7 +53,7 @@ then
 		exit 1
 	fi
 	rm -r $batchname
-	sed -n '/^#/!p' $listfile| \
+	sed -n '/^#/!p' $listfile|sed -n '/^$/!p'| \
 	while read line
 	do
 		run_task $line $logdst/$batchname
