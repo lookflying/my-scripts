@@ -18,6 +18,7 @@ then
 			do
 				name=${log%/$logname}
 				name=${name##*/}
+				name=`echo $name|sed 'y/_/ /'`
 				echo -n -e  "$name\t"
 				for key in $keys
 				do
