@@ -50,7 +50,7 @@ pid=`grep $pid_mark $log_file|awk '{print $1}'`
 echo pid= $pid
 echo -e -n "period=\t"$period"000 ns\n" 
 echo -e -n "budget=\t"$budget"000 ns\t"
-echo $budget $period|awk '{printf "%3.2f%%\n", $1/$2}'
+echo $budget $period|awk '{printf "%3.2f%%\n", $1/$2*100}'
 echo -e -n "execute=\t"$execute"000 ns\t"
 echo $execute $budget $period|awk '{printf "%3.2f%%\t%3.2f%%\n", $1/$2*100, $1/$3*100}'
 begin=`grep "===begin===" -n $log_file|awk 'BEGIN{FS=":"}{print $1+1}'`
