@@ -31,11 +31,16 @@ then
 				fi
 				for key in $keys
 				do
-					value=`cat $log|sed -n '/pid=/,$p'|grep $key`
-					if [ $? -eq 0 ]
+					if [ $key = "latency" ] || [ $key = "Latency" ]
 					then
-						pvalue=`echo $value|awk '{$1="";print $0}'`
-						echo -n -e "$pvalue\t"
+						grep "Average wakeup latency" $log|awk '{printf $4"\t"}'
+					else
+						value=`cat $log|sed -n '/pid=/,$p'|grep $key`
+						if [ $? -eq 0 ]
+						then
+							pvalue=`echo $value|awk '{$1="";print $0}'`
+							echo -n -e "$pvalue\t"
+						fi
 					fi
 				done
 				echo -n -e "\n"
