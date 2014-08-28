@@ -14,14 +14,16 @@ if [ $# -eq 5 ]
 then
 	periods=`echo $1|sed 'y/,/ /'`
 	echo $periods
+	set -x
 	eval `echo $2|awk 'BEGIN{FS=":"}{if(NF==5){print "budget_min="$1";budget_max="$2";budget_step="$3";budget_count="$4";budget_gap="$5";"}else{print "echo "$0" "NF";exit 1"} }'`
 #	echo $budget_min" "$budget_max" "$budget_step" "$budget_count" "$budget_gap
 	eval `echo $3|awk 'BEGIN{FS=":"}{if(NF==5){print "exec_min="$1";exec_max="$2";exec_step="$3";exec_count="$4";exec_gap="$5";"}else{print "echo "$0" "NF";exit 1"} }'`
 #	echo $exec_min" "$exec_max" "$exec_step" "$exec_count" "$exec_gap
+	set +x
 	duration=$4
 	log=$5
 
-	if [ -n "$budget_count" ]
+	if [ $budget_count -ne 0 ]
 	then
 		budget_step=`expr \( $budget_max - $budget_min \) / $budget_count`
 	fi
@@ -33,7 +35,7 @@ then
 	fi
 
 
-	if [ -n "$exec_count" ]
+	if [ $exec_count -ne 0 ]
 	then
 		exec_step=`expr \( $exec_max - $exec_min \) / $exec_count`
 	fi
