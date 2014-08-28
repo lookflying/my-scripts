@@ -37,7 +37,6 @@ then
 	done
 	echo "generated $count task"
 else
-	echo "usage: $0 <period> <budget_min>:<budget_max>:<step>:<count>:<gap> <exec_min>:<exec_max>:<step>:<count>:<gap> <duration> <log>"
-	echo "ps: count overwrite step"
+	echo "usage: $0 <period1>,<period2>,... <budget1>,<budget2>,... <exec1>,<exec2>,... <duration1>,<duration2>,... <log>"
 fi
 
