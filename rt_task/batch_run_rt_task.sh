@@ -22,14 +22,13 @@ do
 	case $opt in
 	f)
 		echo task list file = $OPTARG
-		listfiles=$listfiles" " $OPTARG
+		listfiles=$listfiles" "$OPTARG
 		;;
 	l)
 		echo log destination = $OPTARG
 		logdst=$OPTARG
 	esac
 done
-exit 0
 for listfile in $listfiles
 do
 	if [ -n "$listfile" ] && [ -n "$logdst" ]
