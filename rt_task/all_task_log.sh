@@ -20,11 +20,12 @@ then
 				vmname=${vmname%%/*}
 				name=${log%/$logname}
 				name=${name##*/}
-				name=`echo $name|sed 'y/_/ /'`
 				if [ "$vmname" = "$name" ]
 				then
+					name=`echo $name|sed 'y/_/ /'`
 					echo -n -e  "$name\t"
 				else
+					name=`echo $name|sed 'y/_/ /'`
 					vmname=${vmname##*-}
 					vmname=`echo $vmname|sed 'y/_/ /'`
 					vmbandwidth=`echo $vmname|awk '{print $2/$1*100"%"}'`
@@ -41,7 +42,7 @@ then
 						then
 							pvalue=`echo $value|awk '{$1="";print $0}'`
 							echo -n -e "$pvalue\t"
-							if [ -n "$vmbandwidth" ] && [ "${value/"thread_run"/}" != "$value" ]
+							if [ -n "$vmbandwidth" ] && [ "${value/"thread_run="/}" != "$value" ]
 							then
 								taskload=`echo $value|awk -v vmbandwidth=$vmbandwidth '{print $5/vmbandwidth*100"%"}'`
 								echo -n -e "$taskload\t"

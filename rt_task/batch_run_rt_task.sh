@@ -22,44 +22,48 @@ do
 	case $opt in
 	f)
 		echo task list file = $OPTARG
-		listfile=$OPTARG
+		listfiles=$listfiles" " $OPTARG
 		;;
 	l)
 		echo log destination = $OPTARG
 		logdst=$OPTARG
 	esac
 done
-
-if [ -n "$listfile" ] && [ -n "$logdst" ]
-then
-	list=${listfile%.*}
-	batchname=`date +%Y%m%d_%H%M%S_`$list
-	if [ ! -f $listfile ]
+exit 0
+for listfile in $listfiles
+do
+	if [ -n "$listfile" ] && [ -n "$logdst" ]
 	then
-		echo $listfile does not exist.
-		exit 1
+		list=${listfile%.*}
+		batchname=`date +%Y%m%d_%H%M%S_`$list
+		if [ ! -f $listfile ]
+		then
+			echo $listfile does not exist.
+			exit 1
+		fi
+		mkdir $batchname &>/dev/null
+		if [ $? -ne 0 ]
+		then
+			echo fail to mkdir $batchname
+			exit 1
+		fi
+		echo dir = $batchname
+		rsync -av $batchname $logdst &>/dev/null
+		if [ $? -ne 0 ]
+		then
+			echo can not access $logdst
+			exit 1
+		fi
+		rm -r $batchname
+		sed -n '/^#/!p' $listfile|sed -n '/^$/!p'| \
+		while read line
+		do
+			run_task $line $logdst/$batchname
+		done
+	else
+		echo "usage:"
+		echo -e "\t"-f"\t"task list file
+		echo -e "\t"-l"\t"log destination
+		exit 0
 	fi
-	mkdir $batchname &>/dev/null
-	if [ $? -ne 0 ]
-	then
-		echo fail to mkdir $batchname
-		exit 1
-	fi
-	echo dir = $batchname
-	rsync -av $batchname $logdst &>/dev/null
-	if [ $? -ne 0 ]
-	then
-		echo can not access $logdst
-		exit 1
-	fi
-	rm -r $batchname
-	sed -n '/^#/!p' $listfile|sed -n '/^$/!p'| \
-	while read line
-	do
-		run_task $line $logdst/$batchname
-	done
-else
-	echo "usage:"
-	echo -e "\t"-f"\t"task list file
-	echo -e "\t"-l"\t"log destination
-fi
+done
