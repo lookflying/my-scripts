@@ -17,7 +17,7 @@ function run_task()
 		echo fail to rsync to $dst/$taskname @ `data +"%Y-%m-%d %H:%M:%S"`
 	fi
 }
-while getopts :f:l: opt
+while getopts :f:l:c: opt
 do
 	case $opt in
 	f)
@@ -27,6 +27,11 @@ do
 	l)
 		echo log destination = $OPTARG
 		logdst=$OPTARG
+		;;
+	c)
+		echo comment = $OPTARG
+		comment=$OPTARG
+		;;
 	esac
 done
 for listfile in $listfiles
@@ -35,6 +40,10 @@ do
 	then
 		list=${listfile%.*}
 		batchname=`date +%Y%m%d_%H%M%S_`$list
+		if [ -n "$comment" ]
+		then
+			batchname=$batchname"_"$comment
+		fi
 		if [ ! -f $listfile ]
 		then
 			echo $listfile does not exist.
@@ -63,6 +72,7 @@ do
 		echo "usage:"
 		echo -e "\t"-f"\t"task list file
 		echo -e "\t"-l"\t"log destination
+		echo -e "\t"-c"\t"comment, will be append to log dir
 		exit 0
 	fi
 done
