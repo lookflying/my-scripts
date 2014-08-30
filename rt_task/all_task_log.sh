@@ -1,6 +1,6 @@
 #!/bin/bash
 logname="run.log"
-keys="miss_cnt"
+keys="miss_cnt= correct_thread_runtime= correct_cnt= thread_total= thread_run= latency"
 if [ $# -ge 1 ]
 then
 	dir=$1
@@ -53,4 +53,6 @@ then
 			done
 		fi
 	fi
+else
+	echo "usage: $0 log_dir <field1> <field2> ..."
 fi
