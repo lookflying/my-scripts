@@ -27,7 +27,8 @@ then
 				else
 					vmname=${vmname##*-}
 					vmname=`echo $vmname|sed 'y/_/ /'`
-					echo -n -e "$vmname\t$name\t"
+					vmbandwidth=`echo $vmname|awk '{print $2/$1*100"%"}'`
+					echo -n -e "$vmname\t$vmbandwidth\t$name\t"
 				fi
 				for key in $keys
 				do
@@ -40,6 +41,11 @@ then
 						then
 							pvalue=`echo $value|awk '{$1="";print $0}'`
 							echo -n -e "$pvalue\t"
+							if [ -n "$vmbandwidth" ] && [ "${value/"thread_run"/}" != "$value" ]
+							then
+								taskload=`echo $value|awk -v vmbandwidth=$vmbandwidth '{print $5/vmbandwidth*100"%"}'`
+								echo -n -e "$taskload\t"
+							fi
 						fi
 					fi
 				done
