@@ -25,7 +25,8 @@ then
 			fi
 	#			echo $key
 	#			echo $line |sed 'y/\t%#/   /'|tr -s " "|cut -d" " -f$columns --output-delimiter=" " >> $target_dir/$key".txt"
-			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",")}{for(i in cols){printf $cols[i]"\t"}printf "\n"}' >> $target_dir/$key".txt"
+			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",");len=length(cols)}{for(i=1; i<=len; ++i){printf $cols[i]"\t"}printf "\n"}' >> $target_dir/$key".txt"
+#			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",")}{for(i in cols){printf $cols[i]"\t"}printf "\n"}' 
 		fi
 	done
 else
