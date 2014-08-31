@@ -2,7 +2,7 @@
 vm_user=root
 #vm_user=lookflying
 notify_run=notify_run.sh
-batch_run=batch_run_rt_task.sh
+batch_run=vm_batch_run_rt_task.sh
 #batch_run=longrun.sh
 working_dir=/root/my-scripts/rt_task
 #working_dir=/home/lookflying/my-scripts/rt_task
