@@ -19,7 +19,7 @@ then
 			key=${key%_}
 #			echo $key
 #			echo $line |sed 'y/\t%#/   /'|tr -s " "|cut -d" " -f$columns --output-delimiter=" " >> $target_dir/$key".txt"
-			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",")}{for(i in cols){printf $cols[i]" "}printf "\n"}'
+			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",")}{for(i in cols){printf $cols[i]" "}printf "\n"}' >> $target_dir/$key".txt"
 	fi
 	done
 else
