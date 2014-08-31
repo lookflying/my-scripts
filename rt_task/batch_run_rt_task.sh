@@ -42,7 +42,7 @@ do
 		batchname=`date +%Y%m%d_%H%M%S_`$list
 		if [ -n "$comment" ]
 		then
-			batchname=$batchname"_"$comment
+			batchname=$batchname"-"$comment
 		fi
 		if [ ! -f $listfile ]
 		then
