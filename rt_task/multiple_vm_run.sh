@@ -14,11 +14,12 @@ then
 	shift 2
 	for vm in $vms
 	do
-		ssh $vm_user@$vm <<-END_OF_CMD
+		vm_ip=`echo $vm | cut -d":" -f1`
+		vm_pid=`echo $vm | cut -d":" -f2`
+		ssh $vm_user@$vm_ip <<-END_OF_CMD
 			cd $working_dir 
-			nohup ./$notify_run $notify_info/$vm ./$batch_run $@ >/dev/null &
+			nohup ./$notify_run $notify_info/$vm_ip ./$batch_run $vm_pid $@ >/dev/null &
 		END_OF_CMD
-#		ssh $vm_user@$vm "cd $working_dir;nohup ./$notify_run $notify_info/$vm ./$batch_run $@ &;exit" &
 	done
 	running=1
 	notify_user=`echo $notify_info|cut -d"," -f1`
@@ -48,5 +49,5 @@ then
 	end=`date +%s`
 	echo last `expr $end - $begin` sec
 else
-	echo "usage: $0 <vm_ip1>,<vm_ip2> <notify_user>,<notify_ip>,<notify_path> <script_arguments>..."
+	echo "usage: $0 <vm_ip1>:<vm_pid1>,<vm_ip2><vm_pid2>,... <notify_user>,<notify_ip>,<notify_path> <script_arguments>..."
 fi
