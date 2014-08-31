@@ -11,8 +11,8 @@ then
 	shift 3
 	for deadline in $deadlines
 	do
-		echo ssh host_ip "$set_deadline $vm_pid $deadline"
-		ssh host_ip "$set_deadline $vm_pid $deadline"
+		echo ssh $host_ip "$set_deadline $vm_pid $deadline"
+		ssh $host_ip "$set_deadline $vm_pid $deadline"
 		if [ $? -ne 0 ]
 		then
 			echo "set deadline failed"
