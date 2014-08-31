@@ -32,7 +32,9 @@ then
 		running=0
 		for vm in $vms
 		do
-			state=`ssh $notify_user@$notify_ip "cat $notify_path/$vm"`
+			vm_ip=`echo $vm | cut -d":" -f1`
+			vm_pid=`echo $vm | cut -d":" -f2`
+			state=`ssh $notify_user@$notify_ip "cat $notify_path/$vm_ip"`
 			if [ $? -ne 0 ]
 			then
 				running=1
