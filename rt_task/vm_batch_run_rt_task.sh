@@ -12,6 +12,7 @@ then
 	for deadline in $deadlines
 	do
 		echo ssh host_ip "$set_deadline $vm_pid $deadline"
+		ssh host_ip "$set_deadline $vm_pid $deadline"
 		if [ $? -ne 0 ]
 		then
 			echo "set deadline failed"
@@ -19,7 +20,8 @@ then
 		fi
 #		sleep 1
 		comment=`echo $deadline|sed 'y/:/_/'`
-		echo $batch_run $@ -c $comment
+		echo $dir/$batch_run $@ -c $comment
+		$dir/$batch_run $@ -c $comment
 	done
 else
 	echo "usage: $0 <host_ip> <vm_pid> <period1>:<exec1>,<period2>:<exec2>,... <batch_run_arguments>..."
