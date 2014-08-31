@@ -19,7 +19,7 @@ then
 			exit 1
 		fi
 #		sleep 1
-		comment=$vm_pid"_"`echo $deadline|sed 'y/:/_/'`
+		comment=$vm_pid"-"`echo $deadline|sed 'y/:/_/'`
 		echo $dir/$batch_run $@ -c $comment
 		$dir/$batch_run $@ -c $comment
 	done
