@@ -35,7 +35,7 @@ then
 	for key in ${!files[@]}
 	do
 		file=${files[$key]}
-		cat $file|sort -V >$file
+		cat $file|sort -V -o $file
 		if [ -n "$names" ]
 		then
 			sed -i "1 i $names" $file
