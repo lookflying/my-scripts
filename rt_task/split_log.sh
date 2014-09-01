@@ -6,9 +6,10 @@ then
 	columns=$3
 	names=$4
 	ref_columns=${ref_columns//","/" "}
-	names=`echo $names|sed 'y/,/\t/'`
+	names=`echo "$names"|sed 'y/,/\t/'`
 	mkdir -p $target_dir
 	rm -rf $target_dir/*
+	declare -A files											 
 	while read line
 	do
 		if [ -n "$line" ]
@@ -19,14 +20,20 @@ then
 				key=$key`echo $line|awk -v col=$col '{print $col"_"}'`
 			done
 			key=${key%_}
-			if [ -n "$names" ] && [ ! -e $target_dir/$key".txt" ]
-			then
-				echo "$names" > $target_dir/$key".txt"
-			fi
 	#			echo $key
 	#			echo $line |sed 'y/\t%#/   /'|tr -s " "|cut -d" " -f$columns --output-delimiter=" " >> $target_dir/$key".txt"
 			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",");len=length(cols)}{for(i=1; i<=len; ++i){printf $cols[i]"\t"}printf "\n"}' >> $target_dir/$key".txt"
+			files[$key]=$target_dir/$key".txt"
 #			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",")}{for(i in cols){printf $cols[i]"\t"}printf "\n"}' 
+		fi
+	done
+	for key in ${!files[@]}
+	do
+		file=${files[$key]}
+		cat $file|sort -V|tee $file
+		if [ -n "$names" ]
+		then
+			sed -i "1 i $names" $file
 		fi
 	done
 else
