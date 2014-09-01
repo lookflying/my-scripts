@@ -27,19 +27,19 @@ then
 		echo -n -e $log"\t"
 		case $operation in
 		lt)
-			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col < value){found=1;line=$0}}END{if(found){print line}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col + 0 == $col && $col < value){found=1;line=$0}}END{if(found){print line}}' $log 
 			;;
 		le)
-			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col <= value){found=1;line=$0}}END{if(found){print line}}' $log
+			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col + 0 == $col && $col <= value){found=1;line=$0}}END{if(found){print line}}' $log
 			;;
 		eq)
-			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col == value){found=1;line=$0}}END{if(found){print line}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col + 0 == $col && $col == value){found=1;line=$0}}END{if(found){print line}}' $log 
 			;;
 		ge)
-			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col >= value){found=1;line=$0}}END{if(found){print line}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col + 0 == $col && $col >= value){found=1;line=$0}}END{if(found){print line}}' $log 
 			;;
 		gt)
-			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col > value){found=1;line=$0}}END{if(found){print line}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{found=0;line="";}{if($col + 0 == $col && $col > value){found=1;line=$0}}END{if(found){print line}}' $log 
 			;;
 		*)
 			echo operation \"$operation\" not supported
