@@ -37,9 +37,17 @@ then
 						echo -n -e  "$name\t"
 					else
 						name=`echo $name|sed 'y/_/ /'`
+						vmpid=$vmname
 						vmname=${vmname##*-}
+						vmpid=${vmpid%$vmname}
+						vmpid=${vmpid%-}
+						vmpid=${vmpid##*-}
 						vmname=`echo $vmname|sed 'y/_/ /'`
 						vmbandwidth=`echo $vmname|awk '{print $2/$1*100"%"}'`
+						if [ -n "$vmpid" ] && [ $vmpid -ne 0 ] && [ $vmpid -ne 1 ]
+						then
+							echo -n -e "$vmpid\t"
+						fi
 						echo -n -e "$vmname\t$vmbandwidth\t$name\t"
 					fi
 					for key in $keys

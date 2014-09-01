@@ -27,25 +27,26 @@ then
 		echo -n -e $log"\t"
 		case $operation in
 		lt)
-			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){print last;exit}else{last=$0}}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){printf last;exit}else{last=$0}}}' $log 
 			;;
 		le)
-			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){print last;exit}else{last=$0}}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){printf last;exit}else{last=$0}}}' $log 
 			;;
 		eq)
-			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){print last;exit}else{last=$0}}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){printf last;exit}else{last=$0}}}' $log 
 			;;
 		ge)
-			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){print last;exit}else{last=$0}}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){printf last;exit}else{last=$0}}}' $log 
 			;;
 		gt)
-			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){print last;exit}else{last=$0}}}' $log 
+			awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){printf last;exit}else{last=$0}}}' $log 
 			;;
 		*)
 			echo operation \"$operation\" not supported
 			exit 1
 			;;
 		esac
+		echo
 	done
 else
 	echo "usage: $0 -c <column> -o <operation> -v <value> <logfile1> <logfile2> ..."
