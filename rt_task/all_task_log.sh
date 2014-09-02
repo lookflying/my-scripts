@@ -1,6 +1,6 @@
 #!/bin/bash
 logname="run.log"
-keys="miss_cnt= correct_thread_runtime= correct_cnt= thread_total= thread_run= latency"
+keys="miss_cnt= correct_thread_runtime= correct_cnt= thread_total= thread_run= miss_cnt_after_middle= latency"
 while getopts :k: opt
 do
 	case $opt in
