@@ -21,5 +21,5 @@ then
 		exit 1
 	fi	
 else
-	echo "usage: $0 <notify_user>,<notify_ip>,<notify_file> <cmd>..."
+	echo "usage: $0 <notify_user>,<notify_ip>,<notify_path> <cmd>..."
 fi
