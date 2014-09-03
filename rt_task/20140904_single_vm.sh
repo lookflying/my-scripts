@@ -9,3 +9,10 @@ do
 	$batch_run $vm_pid $host_ip $period:$execute -f 10000_5000_1000-50_50_1_0_1-10_50_1_0_1-20-0.list -l lookflying@192.168.1.3:/home/lookflying/work/log/20140904_single_vm_different_vm_period_miss_rate_raw
 done
 
+for period in 10000 1000
+do
+	execute=$[ $period / 2 ]
+	$batch_run $vm_pid $host_ip $period:$execute -f 10000_9000_8000_7000_6000_5000_4000_3000_2000_1000-50_50_1_0_1-0_0_1_0_1-20-0.list -l lookflying@192.168.1.3:/home/lookflying/work/log/20140904_single_vm_different_task_period_overhead_raw
+	$batch_run $vm_pid $host_ip $period:$execute -f 10000_9000_8000_7000_6000_5000_4000_3000_2000_1000-50_50_1_0_1-10_50_1_0_1-20-0.list -l lookflying@192.168.1.3:/home/lookflying/work/log/20140904_single_vm_different_task_period_miss_rate_raw
+done
+

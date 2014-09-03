@@ -1,0 +1,6 @@
+#./generate_task_list.sh 10000,5000,1000 50:50:1:0:1 0:0:1:0:1 20 0
+#period	budget	execute	duration	log
+
+10000	5000	0	20	0
+5000	2500	0	20	0
+1000	500	0	20	0
