@@ -1,6 +1,15 @@
 #!/bin/bash
 taskscript=./run_rt_task.sh
 runlog="run.log"
+function usage()
+{
+		echo "usage:"
+		echo -e "\t"-f"\t"task list file
+		echo -e "\t"-l"\t"log destination
+		echo -e "\t"-c"\t"comment, will be append to log dir
+		exit 0
+}
+
 function run_task()
 {
 	period=$1
@@ -14,9 +23,13 @@ function run_task()
 	rsync /dev/shm/*.log /dev/shm/*.dat $dst/$taskname
 	if [ $? -ne 0 ]
 	then
-		echo fail to rsync to $dst/$taskname @ `data +"%Y-%m-%d %H:%M:%S"`
+		echo fail to rsync to $dst/$taskname @ `date +"%Y-%m-%d %H:%M:%S"`
 	fi
 }
+if [ $# -eq 0 ]
+then
+	usage
+fi
 while getopts :f:l:c: opt
 do
 	case $opt in
@@ -69,10 +82,6 @@ do
 			run_task $line $logdst/$batchname
 		done
 	else
-		echo "usage:"
-		echo -e "\t"-f"\t"task list file
-		echo -e "\t"-l"\t"log destination
-		echo -e "\t"-c"\t"comment, will be append to log dir
-		exit 0
+		usage
 	fi
 done
