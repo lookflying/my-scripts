@@ -32,19 +32,19 @@ then
 		then
 			case $operation in
 			lt)
-				sort -k $sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){printf last;exit}else{last=$0}}}'
 				;;
 			le)
-				sort -k $sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){printf last;exit}else{last=$0}}}'
 				;;
 			eq)
-				sort -k $sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){printf last;exit}else{last=$0}}}'
 				;;
 			ge)
-				sort -k $sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){printf last;exit}else{last=$0}}}'
 				;;
 			gt)
-				sort -k $sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){printf last;exit}else{last=$0}}}'
 				;;
 			*)
 				echo operation \"$operation\" not supported
