@@ -9,45 +9,45 @@ function last_line()
 		then
 			case $operation in
 			lt)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
 				;;
 			le)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
 				;;
 			eq)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
 				;;
 			ge)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
 				;;
 			gt)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){printf last;exit}else{last=$0}}}'
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
 				;;
 			*)
 				echo operation \"$operation\" not supported
-				exit 1
+				printed=1;exit; 1
 				;;
 			esac
 		else
 			case $operation in
 			lt)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){printf last;exit}else{last=$0}}}' $log 
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
 				;;
 			le)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){printf last;exit}else{last=$0}}}' $log 
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
 				;;
 			eq)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){printf last;exit}else{last=$0}}}' $log 
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
 				;;
 			ge)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){printf last;exit}else{last=$0}}}' $log 
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
 				;;
 			gt)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){printf last;exit}else{last=$0}}}' $log 
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
 				;;
 			*)
 				echo operation \"$operation\" not supported
-				exit 1
+				printed=1;exit; 1
 				;;
 			esac
 		fi
