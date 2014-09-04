@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 if [ $# -ge 3 ]
 then
 	target_dir=$1
@@ -48,4 +47,3 @@ then
 else
 	echo "usage $0 target_dir ref_column1,ref_column2,ref_column3,... col1,col2,col3,... [name1,name2,name3,...]"
 fi
-set +x
