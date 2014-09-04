@@ -6,7 +6,7 @@ then
 	columns=$3
 	names=$4
 	ref_columns=${ref_columns//","/" "}
-	names=`echo "$names"|sed 'y/,/\t/'`
+	names=`echo "$names"|sed 'y/,_/\t /'`
 	mkdir -p $target_dir
 	rm -rf $target_dir/*
 	declare -A files											 
@@ -22,6 +22,10 @@ then
 				key=$key`echo $line|awk -v col=$col '{print $col"_"}'`
 			done
 			key=${key%_}
+			if [ -z "$key" ]
+			then
+				continue
+			fi
 	#			echo $key
 	#			echo $line |sed 'y/\t%#/   /'|tr -s " "|cut -d" " -f$columns --output-delimiter=" " >> $target_dir/$key".txt"
 			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",")}{for(i=1; i in cols; ++i){printf $cols[i]"\t"}printf "\n"}' >> $target_dir/$key".txt"
