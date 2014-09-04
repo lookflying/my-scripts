@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 if [ $# -ge 3 ]
 then
 	target_dir=$1
@@ -24,7 +25,7 @@ then
 			key=${key%_}
 	#			echo $key
 	#			echo $line |sed 'y/\t%#/   /'|tr -s " "|cut -d" " -f$columns --output-delimiter=" " >> $target_dir/$key".txt"
-			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",");len=length(cols)}{for(i=1; i<=len; ++i){printf $cols[i]"\t"}printf "\n"}' >> $target_dir/$key".txt"
+			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",")}{for(i=1; i in cols; ++i){printf $cols[i]"\t"}printf "\n"}' >> $target_dir/$key".txt"
 			files[$key]=$target_dir/$key".txt"
 #			echo $line |sed 'y/%#/  /'|awk -v columns=$columns 'BEGIN{split(columns, cols, ",")}{for(i in cols){printf $cols[i]"\t"}printf "\n"}' 
 			line_cnt=$[ $line_cnt + 1 ]
@@ -47,3 +48,4 @@ then
 else
 	echo "usage $0 target_dir ref_column1,ref_column2,ref_column3,... col1,col2,col3,... [name1,name2,name3,...]"
 fi
+set +x
