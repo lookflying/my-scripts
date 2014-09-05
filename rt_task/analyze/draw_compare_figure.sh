@@ -2,12 +2,13 @@
 if [ $# -eq 1 ]
 then 
 	dir=$1
-	files=`find $dir -name \\*.txt|sort -V`
+	files=`find $dir -maxdepth 1 -name \\*.txt|sort -V`
 	declare -A file_array
 	for file in $files
 	do
 		name=${file##*/}
-		key=`echo $name|cut -d_ -f1`
+#		key=`echo $name|cut -d_ -f1`
+key=`echo $name|awk 'BEGIN{FS="_"}{for(i=1;i<NF;++i)printf $i;}'`
 		if [ -z "${file_array[$key]}" ]
 		then
 			file_array[$key]=$file
@@ -32,6 +33,7 @@ then
 		legend=${file%.*}
 		legend=${legend##*/}
 		legend=`echo $legend|sed 'y/_/ /'`
+		vm_period=`echo $legend|awk '{print $(NF-1)}'`
 		echo -n -e "
 				\\\\addplot table[x={task load}, y={miss rate after middle}, col sep=tab]{$file};
 				\\\\addlegendentry{$legend};"
@@ -39,7 +41,7 @@ then
 	echo -n -e "
 			\\\\end{axis}
 		\\\\end{tikzpicture}
-		\\\\caption{VM period = $key us}
+		\\\\caption{VM period = $vm_period us}
 	\\\\end{subfigure}"
 	done
 	echo -n -e "
