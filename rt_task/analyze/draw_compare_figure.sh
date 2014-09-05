@@ -3,6 +3,10 @@ if [ $# -eq 1 ]
 then 
 	dir=$1
 	files=`find $dir -maxdepth 1 -name \\*.txt|sort -V`
+	if [ -z "$files" ]
+	then
+		exit 0
+	fi
 	declare -A file_array
 	for file in $files
 	do
@@ -27,7 +31,7 @@ key=`echo $name|awk 'BEGIN{FS="_"}{for(i=1;i<NF;++i)printf $i;}'`
 		\\\\centering
 		\\\\begin{tikzpicture}[scale=0.6, baseline]
 			\\\\begin{axis}[xlabel=Task Utilization(\\\\%), ylabel=Deadline Miss Ratio(\\\\%), legend pos=north west]"
-	files=`echo ${file_array[$key]}|column -ts,`
+	files=`echo ${file_array[$key]}|sed 'y/,/ /'`
 	for file in $files
 	do
 		legend=${file%.*}
