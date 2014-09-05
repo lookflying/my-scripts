@@ -17,7 +17,7 @@ key=`echo $name|awk 'BEGIN{FS="_"}{for(i=1;i<NF;++i)printf $i;}'`
 		fi
 	done
 	echo -n -e "
-\\\\begin{figure}
+\\\\begin{figure}[!h]
 	\\\\centering"
 	
 	for key in `echo ${!file_array[@]}|sed 'y/ /\n/'|sort -V`
@@ -34,9 +34,10 @@ key=`echo $name|awk 'BEGIN{FS="_"}{for(i=1;i<NF;++i)printf $i;}'`
 		legend=${legend##*/}
 		legend=`echo $legend|sed 'y/_/ /'`
 		vm_period=`echo $legend|awk '{print $(NF-1)}'`
+		period=`echo $legend|awk '{print $NF}'`
 		echo -n -e "
 				\\\\addplot table[x={task load}, y={miss rate after middle}, col sep=tab]{$file};
-				\\\\addlegendentry{$legend};"
+				\\\\addlegendentry{$period};"
 	done
 	echo -n -e "
 			\\\\end{axis}

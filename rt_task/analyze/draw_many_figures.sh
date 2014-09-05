@@ -29,7 +29,7 @@ then
 	for period in `echo ${!period_array[@]}|sed 'y/ /\n/'|sort -V`
 	do
 		echo -n -e "
-\\\\begin{figure}
+\\\\begin{figure}[!h]
 	\\\\centering"
 		pids=`echo ${period_array[$period]}|sed 'y/,/\n/'|uniq`
 		for pid in $pids
@@ -43,9 +43,10 @@ then
 			files=`echo ${pid_array[$pid$period]}|sed 'y/,/ /'`
 			for file in $files
 			do
+				echo $file 1>&2
 				legend=${file%.*}
 				legend=${legend##*/}
-				legend=`echo $legend|sed 'y/_/ /'`
+				legend=`echo $legend|awk 'BEGIN{FS="_"}{print $NF}'`
 				echo -n -e "
 				\\\\addplot table[x={task load}, y={miss rate after middle}, col sep=tab]{$file};
 				\\\\addlegendentry{$legend};"
