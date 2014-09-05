@@ -43,7 +43,7 @@ then
 	\\\\end{subfigure}"
 	done
 	echo -n -e "
-	\\\\caption{Task deadline miss ratio under multiple virtual machine environment}
+	\\\\caption{Task deadline miss ratio under different virtual machine environment}
 \\\\end{figure}\\n"
 else
 	echo "usage: $0 <dir>"
