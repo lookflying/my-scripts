@@ -1,5 +1,6 @@
 #!/bin/bash
 vm_utilization=50
+precision=1000 #default 1000ns
 utilization=50 #default 50%
 duration=20 #default 20
 log_switch=0
@@ -51,6 +52,28 @@ function check_finished()
 			try_count=0
 			return 0
 		fi	
+	fi
+}
+function get_next_period()
+{
+	last_pass_period=$1
+	last_period=$2
+	if [ $last_pass_period -eq $last_period ]
+	then
+		next_period=$[ $last_period / 2 ]
+		if [ $next_period -ge 1 ]
+		then
+			echo $next_period
+			return 0
+		else
+			echo 1
+			return 1
+		fi
+	elif [ $last_pass_period -gt $last_period ] && [ $[ $last_pass_period - $last_period ] -gt $precision ]
+	then
+		next_period=$[ ($last_pass_period + $last_period) / 2 ]
+		echo $next_period
+		return 0
 	fi
 }
 while getopts :s:t:u:l:c: opt
@@ -107,5 +130,5 @@ then
 		finished=$?
 	done
 else
-	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] -l <log_dst> -c comment"
+	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] [-p <precision>] -l <log_dst> -c comment"
 fi
