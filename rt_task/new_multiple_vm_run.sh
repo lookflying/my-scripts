@@ -21,7 +21,7 @@ then
 		host_ip=`echo $vm | cut -d":" -f5`
 		ssh $vm_user@$vm_ip <<-END_OF_CMD
 			cd $working_dir 
-			nohup ./$notify_run $notify_info/$vm_ip ./$batch_run $vm_pid $host_ip $vm_period:$vm_exec $@ >/dev/null &
+			nohup ./$notify_run $notify_info ./$batch_run $vm_pid $host_ip $vm_period:$vm_exec $@ >/dev/null &
 		END_OF_CMD
 	done
 	running=1
