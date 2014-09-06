@@ -60,7 +60,7 @@ function check_finished()
 		echo 0
 	fi
 }
-while getopts :s:t:u:l: opt
+while getopts :s:t:u:l:c: opt
 do
 	case $opt in
 	s)
