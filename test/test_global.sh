@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 component_name=""
 function change_component(){
 	component_name=$1
@@ -7,5 +8,6 @@ function change_component(){
 echo "$component_name"
 change_component "hello"
 echo "$component_name"
-change_component "world"
+echo `change_component "world"`
 echo "$component_name"
+set +x
