@@ -43,7 +43,7 @@ then
 	vm_comment="vm_frequency-"$vm_ip"-"$vm_pid"-"$vm_period"_"$vm_exec${comment:+"-"$comment}
 	
 	#set deadline
-	echo ssh $host_ip "$set_deadline $vm_pid $vm_period:$vm_exec"
+	ssh $host_ip "$set_deadline $vm_pid $vm_period:$vm_exec"
 	if [ $? -ne 0 ]
 	then
 		echo "set deadline failed"
@@ -51,7 +51,7 @@ then
 	fi
 	
 	#run frequency
-	echo	$run_frequency -s $start_period -t $threshold -u $utilization -p $precision -l $log_dst -c $vm_comment
+	$run_frequency -s $start_period -t $threshold -u $utilization -p $precision -l $log_dst -c $vm_comment
 else
 	echo "usage: $0 -h <host_ip> -v <vm_period>:<vm_exec> -i <vm_pid> -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] [-p <precision>] -l <log_dst> [-c <comment>]"
 fi
