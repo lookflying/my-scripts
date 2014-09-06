@@ -31,7 +31,7 @@ function check_finished()
 	try_count=$2
 	threshold=$3
 	period=$4
-	$missed=`echo "$miss_ratio $threshold"|awk'
+	$missed=`echo "$miss_ratio $threshold"|awk '
 	{
 		if ($1 >= $2)
 		{
