@@ -27,11 +27,13 @@ function get_task_miss_rate()
 }
 function check_finished()
 {
-	try_count=$3
+	miss_ratio=$1
+	try_count=$2
+	threshold=$3
 	period=$4
-	missed=`awk -v miss_ratio=$1 -v threshold=$3 '
+	$missed=`echo "$miss_ratio $threshold"|awk'
 	{
-		if (miss_ratio >= threshold)
+		if ($1 >= $2)
 		{
 			print 1
 		}
