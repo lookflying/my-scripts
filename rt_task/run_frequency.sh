@@ -7,14 +7,9 @@ taskscript=`dirname $0`/rt_task.sh
 runlog="run.log"
 function run_task()
 {
-	period=$1
-	budget=$2
-	execute=$3
-	duration=$4
-	log=$5
 	dst=$6
 	taskname=$period"_"$budget"_"$execute"_"$duration
-	$taskscript -p$period -b$budget -e$execute -d$duration -l$log |tee /dev/shm/$runlog
+	$taskscript -p$period -b$budget -e$execute -d$duration -l$log_switch |tee /dev/shm/$runlog
 	rsync /dev/shm/*.log /dev/shm/*.dat $dst/$taskname
 	if [ $? -ne 0 ]
 	then
@@ -43,19 +38,19 @@ function check_finished()
 		try_count=$[ $try_count + 1 ]
 		if [ $try_count -ge 3 ]
 		then
-			echo 1
+			return 1
 		else
-			echo 0
+			return 0
 		fi
 	else
 		period=$[ $period / 2 ]
 		if [ $period -lt 1 ]
 		then
-			echo 1
-			return
+			return 1
+		else
+			try_count=0
+			return 0
 		fi	
-		try_count=0
-		echo 0
 	fi
 }
 while getopts :s:t:u:l:c: opt
@@ -88,7 +83,7 @@ then
 		exit 1
 	fi
 	echo $batchname
-	rsync -av $batchname $log_dst &>/dev/null
+	rsync -av $batchname $log_dst
 	if [ $? -ne 0 ]
 	then
 		echo can not access $log_dst
@@ -96,19 +91,20 @@ then
 	fi
 	rm -r $batchname
 	period=$start_period
-	miss_ratio=0
+	miss_ratio=100
 	try_count=0
-
-	finished=`check_finished`
+	check_finished
+	finished=$?
 	while [ $finished -eq 0 ]
 	do
 		echo "period=$period"
 		budget=$[ $period * $vm_utilization / 100 ]
 		execute=$[ $budget * $utilization / 100 ]
-		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname &>/dev/null
+		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname
 		miss_ratio=`get_task_miss_rate`
 		miss_ratio=${miss_ratio%\%}
-		finished=`check_finished`
+		check_finished
+		finished=$?
 	done
 else
 	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] -l <log_dst> -c comment"
