@@ -82,21 +82,21 @@ do
 done
 if [ -n "$start_period" ] && [ -n "$threshold" ] && [ -n "$log_dst" ]
 then	
-	taskname=`date +%Y%m%d_%H%M%S-`$comment	
-	mkdir -p $taskname &>/dev/null
+	batchname=`date +%Y%m%d_%H%M%S-`$comment	
+	mkdir -p $batchname &>/dev/null
 	if [ $? -ne 0 ]
 	then
-		echo fail to mkdir $taskname
+		echo fail to mkdir $batchname
 		exit 1
 	fi
-	echo $taskname
-	rsync -av $taskname $log_dst &>/dev/null
+	echo $batchname
+	rsync -av $batchname $log_dst &>/dev/null
 	if [ $? -ne 0 ]
 	then
 		echo can not access $log_dst
 		exit 1
 	fi
-	rm -r $taskname
+	rm -r $batchname
 	period=$start_period
 	miss_ratio=0
 	try_count=0
@@ -107,7 +107,7 @@ then
 		echo "period=$period"
 		budget=$[ $period * $vm_utilization / 100 ]
 		execute=$[ $budget * $utilization / 100 ]
-		run_task $period $budget $execute $duration	
+		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname
 		miss_ratio=`get_task_miss_rate`
 		miss_ratio=${miss_ratio%\%}
 		finished=`check_finished $miss_ratio $try_count $threshold`
