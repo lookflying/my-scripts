@@ -50,6 +50,10 @@ then
 			break
 		fi
 	done
+	for key in $notify_keys
+	do
+		ssh $notify_user@$notify_ip "rm $notify_path/$key"
+	done
 	if [ $loop -ne 0 ]
 	then
 		end=`date +%s`
