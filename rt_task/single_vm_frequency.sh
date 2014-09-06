@@ -40,7 +40,7 @@ if [ -n "$start_period" ] && [ -n "$threshold" ] && [ -n "$log_dst" ] && [ -n $h
 then
 	#prepare logging
 	vm_ip=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
-	vm_comment="vm_frequency-"$vm_ip"-"$vm_pid"-"$vm_period"_"$vm_exec${comment:+"-"$comment}
+	vm_comment=$vm_ip"-"$vm_pid"-"$vm_period"_"$vm_exec${comment:+"-"$comment}
 	
 	#set deadline
 	ssh $host_ip "$set_deadline $vm_pid $vm_period:$vm_exec"
