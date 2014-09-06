@@ -46,7 +46,7 @@ function get_next_period()
 	fi
 	if [ $last_pass_period -ge $last_fail_period ]
 	then
-		if [ $[ $last_pass_period - $last_fail_period ] -ge $precision ]
+		if [ $[ $last_pass_period - $last_fail_period ] -gt $precision ]
 		then
 			next_period=$[ ($last_pass_period + $last_fail_period) / 2 ] 
 			return 0
