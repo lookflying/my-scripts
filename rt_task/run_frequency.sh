@@ -112,7 +112,7 @@ then
 		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname
 		miss_ratio=`get_task_miss_rate`
 		miss_ratio=${miss_ratio%\%}
-		finished=`check_finished $miss_ratio $try_count $threshold`
+		finished=`check_finished $miss_ratio $try_count $threshold $period`
 	done
 else
 	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] -l <log_dst> -c comment"
