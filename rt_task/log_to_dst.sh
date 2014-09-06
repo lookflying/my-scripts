@@ -7,7 +7,7 @@ then
 	cmd=$@
 	tmp_file=`mktemp`
 	$cmd |tee $tmp_file
-	file_name=`sed -n "$file_name_line"p $tmp_file`
+	file_name=`sed -n "$file_name_line"p $tmp_file`".txt"
 	rsync -av $tmp_file $log_dst/$file_name
 	if [ $? -ne 0 ]
 	then

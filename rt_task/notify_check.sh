@@ -29,7 +29,7 @@ then
 		running=0
 		for key in $notify_keys
 		do
-			state=`ssh $notify_user@$notify_ip "cat $notify_path/$key"`
+			state=`ssh $notify_user@$notify_ip "cat $notify_path/$key" 2>/dev/null` 
 			if [ $? -ne 0 ]
 			then
 				running=1
