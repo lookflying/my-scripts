@@ -1,8 +1,9 @@
 #!/bin/bash
 vm_user=root
-notify_run=`dirname $0`/notify_run.sh
-notify_check=`dirname $0`/notify_check.sh
-nohup_run=`dirname $0`/nohup_run.sh
+notify_run=notify_run.sh
+notify_check=notify_check.sh
+nohup_run=nohup_run.sh
+single_vm_frequency=single_vm_frequency.sh
 working_dir=/root/my-scripts/rt_task
 utilization=50 #default 50% utilization of cpu
 step=10 #default 10%
@@ -58,6 +59,9 @@ then
 		if [ $num_vm -eq 1 ]
 		then
 			vm_exec=$[ vm_period * $utilization / 100 ]
+			$nohup_run $vm_user@${vm_ips[0]} $working_dir ./$single_vm_frequency
+			
+
 			
 		elif [ $num_vm -eq 2 ]
 		then

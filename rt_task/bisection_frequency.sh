@@ -40,8 +40,6 @@ function check_missed()
 }
 function get_next_period()
 {
-	last_pass_period=$1
-	last_fail_period=$2
 	if [ -z "$last_pass_period" ]
 	then
 		return 1
@@ -126,7 +124,7 @@ then
 		then
 			last_fail_period=$period
 		fi
-		get_next_period $last_pass_period $last_fail_period
+		get_next_period
 		finished=$?
 		period=$next_period
 	done
