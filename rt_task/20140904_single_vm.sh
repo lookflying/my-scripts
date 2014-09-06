@@ -1,5 +1,5 @@
 #!/bin/bash
-vm_pid=12913
+vm_pid=20746
 host_ip=192.168.1.22
 batch_run=${0%/*}/vm_batch_run_rt_task.sh
 log_dst=root@192.168.1.22:/root/mnt/log

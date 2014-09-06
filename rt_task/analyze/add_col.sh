@@ -10,6 +10,7 @@ do
 		;;
 	n)
 		column_name="$OPTARG"
+		column_name=`echo $column_name|sed 'y/_/ /'`
 		;;
 	esac
 done
@@ -26,7 +27,7 @@ then
 	do
 		case $operation in
 		min)
-			awk -v c1=$column1 -v c2=$column2 -v name=$column_name '
+			awk -v c1=$column1 -v c2=$column2 -v name="$column_name" '
 				{
 					if(NR == 1 && $NF + 0 != $NF)
 					{

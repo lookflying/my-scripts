@@ -1,4 +1,60 @@
 #!/bin/bash
+function last_line()
+{
+	logs=$@
+	for log in $logs
+	do
+		echo -n -e $log"\t"
+		if [ -n "$sort_column" ]
+		then
+			case $operation in
+			lt)
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
+				;;
+			le)
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
+				;;
+			eq)
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
+				;;
+			ge)
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
+				;;
+			gt)
+				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}'
+				;;
+			*)
+				echo operation \"$operation\" not supported
+				printed=1;exit; 1
+				;;
+			esac
+		else
+			case $operation in
+			lt)
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
+				;;
+			le)
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
+				;;
+			eq)
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
+				;;
+			ge)
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
+				;;
+			gt)
+				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){if(printed + 0 == 0){printf last};printed=1;exit;}else{last=$0}}}END{if(printed + 0 == 0){printf last}}' $log 
+				;;
+			*)
+				echo operation \"$operation\" not supported
+				printed=1;exit; 1
+				;;
+			esac
+		fi
+		echo
+	done
+}
+
 while getopts :o:v:c:s: opt
 do
 	case $opt in
@@ -25,58 +81,28 @@ shift $[ $OPTIND - 1]
 if [ $# -ge 1 ] && [ -n "$column" ] && [ -n "$operation" ] && [ -n "$value" ] 
 then
 	logs=$@
+	header=""
 	for log in $logs
 	do
-		echo -n -e $log"\t"
-		if [ -n "$sort_column" ]
+		if [ -z "$header" ]
 		then
-			case $operation in
-			lt)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){printf last;exit}else{last=$0}}}'
-				;;
-			le)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){printf last;exit}else{last=$0}}}'
-				;;
-			eq)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){printf last;exit}else{last=$0}}}'
-				;;
-			ge)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){printf last;exit}else{last=$0}}}'
-				;;
-			gt)
-				sort --key=$sort_column -V $log|awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){printf last;exit}else{last=$0}}}'
-				;;
-			*)
-				echo operation \"$operation\" not supported
-				exit 1
-				;;
-			esac
+			header=`head -1 $log`
 		else
-			case $operation in
-			lt)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col < value){printf last;exit}else{last=$0}}}' $log 
-				;;
-			le)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col <= value){printf last;exit}else{last=$0}}}' $log 
-				;;
-			eq)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col == value){printf last;exit}else{last=$0}}}' $log 
-				;;
-			ge)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col >= value){printf last;exit}else{last=$0}}}' $log 
-				;;
-			gt)
-				awk -v value=$value -v col=$column 'BEGIN{last="";}{if($col + 0 == $col){if($col > value){printf last;exit}else{last=$0}}}' $log 
-				;;
-			*)
-				echo operation \"$operation\" not supported
-				exit 1
-				;;
-			esac
+			firstline=`head -1 $log`
+			if [ "$header" != "$firstline" ]
+			then
+				header=""
+				break;
+			fi
 		fi
-		echo
 	done
-else
+	if [ -n "$header" ]
+	then
+		echo -e "file\t"$header
+	fi
+
+	last_line $logs|sort -V
+	else
 	echo "usage: $0 -c <column> -o <operation> -v <value> -s <sort_column> <logfile1> <logfile2> ..."
 	echo -e "\t-c\tcolumn"
 	echo -e "\t-o\toperation, support lt le eq ge gt"
