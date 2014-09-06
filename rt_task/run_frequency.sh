@@ -109,7 +109,7 @@ then
 		echo "period=$period"
 		budget=$[ $period * $vm_utilization / 100 ]
 		execute=$[ $budget * $utilization / 100 ]
-		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname
+		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname &>/dev/null
 		miss_ratio=`get_task_miss_rate`
 		miss_ratio=${miss_ratio%\%}
 		finished=`check_finished $miss_ratio $try_count $threshold $period`
