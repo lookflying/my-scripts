@@ -27,10 +27,6 @@ function get_task_miss_rate()
 }
 function check_finished()
 {
-	miss_ratio=$1
-	try_count=$2
-	threshold=$3
-	period=$4
 	missed=`echo "$miss_ratio $threshold"|awk '
 	{
 		if ($1 >= $2)
@@ -103,7 +99,7 @@ then
 	miss_ratio=0
 	try_count=0
 
-	finished=`check_finished $miss_ratio $try_count $threshold $period`
+	finished=`check_finished`
 	while [ $finished -eq 0 ]
 	do
 		echo "period=$period"
@@ -112,7 +108,7 @@ then
 		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname &>/dev/null
 		miss_ratio=`get_task_miss_rate`
 		miss_ratio=${miss_ratio%\%}
-		finished=`check_finished $miss_ratio $try_count $threshold $period`
+		finished=`check_finished`
 	done
 else
 	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] -l <log_dst> -c comment"
