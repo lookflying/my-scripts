@@ -4,8 +4,10 @@ precision=1000 #default 1000ns
 utilization=50 #default 50%
 duration=20 #default 20
 log_switch=0
-taskscript=`dirname $0`/rt_task.sh
+taskscript=`dirname $0`/run_rt_task_nano.sh
 runlog="run.log"
+last_pass_period=""
+last_fail_period=0 #trick
 function run_task()
 {
 	dst=$6
@@ -72,27 +74,16 @@ function check_finished()
 function get_next_period()
 {
 	last_pass_period=$1
-	last_period=$2
+	last_fail_period=$2
 	if [ -z "$last_pass_period" ]
 	then
 		return 1
 	fi
-	if [ $last_pass_period -eq $last_period ]
+	if [ $last_pass_period -ge $last_fail_period ]
 	then
-		next_period=$[ $last_period / 2 ]
-		if [ $next_period -ge 1 ]
+		if [ $[ $last_pass_period - $last_fail_period ] -ge $precision ]
 		then
-#			echo $next_period
-			return 0
-		else
-			return 1
-		fi
-	elif [ $last_pass_period -gt $last_period ]
-	then
-		if [ $[ $last_pass_period - $last_period ] -gt $precision ]
-		then
-			next_period=$[ ($last_pass_period + $last_period) / 2 ]
-#			echo $next_period
+			next_period=$[ ($last_pass_period + $last_fail_period) / 2 ] 
 			return 0
 		else
 			return 1
@@ -133,7 +124,7 @@ then
 		exit 1
 	fi
 	echo $batchname
-	rsync -av $batchname $log_dst
+	rsync -av $batchname $log_dst &>/dev/null
 	if [ $? -ne 0 ]
 	then
 		echo can not access $log_dst
@@ -141,7 +132,6 @@ then
 	fi
 	rm -r $batchname
 #start benchmark
-	last_pass_period=""
 	period=$start_period
 	miss_ratio=100
 	finished=0
@@ -150,10 +140,10 @@ then
 		budget=$[ $period * $vm_utilization / 100 ]
 		execute=$[ $budget * $utilization / 100 ]
 		retry_count=0
-		while [ $retry_count -lt 3 ]
+		while [ $retry_count -lt 2 ]
 		do
-			echo "period=$period"
-			run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname
+			echo -n "period=$period"
+			run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname &> /dev/null
 			miss_ratio=`get_task_miss_rate`
 			miss_ratio=${miss_ratio%\%}
 			echo -n -e "\tmiss_ratio=$miss_ratio%\n"
@@ -165,10 +155,15 @@ then
 			fi
 			retry_count=$[ $retry_count + 1 ]
 		done
-		get_next_period $last_pass_period $period
+		if [ $missed -eq 1 ]
+		then
+			last_fail_period=$period
+		fi
+		get_next_period $last_pass_period $last_fail_period
 		finished=$?
 		period=$next_period
 	done
+	echo "last_pass_period=$last_pass_period"
 else
 	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] [-p <precision>] -l <log_dst> -c comment"
 fi
