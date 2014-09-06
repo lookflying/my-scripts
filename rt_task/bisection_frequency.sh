@@ -130,7 +130,7 @@ then
 		finished=$?
 		period=$next_period
 	done
-	echo "last_pass_period=$last_pass_period"
+	echo -e "last_pass_period=\t$last_pass_period"
 else
 	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] [-p <precision>] -l <log_dst> -c <comment>"
 fi
