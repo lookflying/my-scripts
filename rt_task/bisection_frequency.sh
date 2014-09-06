@@ -38,39 +38,6 @@ function check_missed()
 	}	'`
 	return $missed	
 }
-function check_finished()
-{
-	missed=`echo "$miss_ratio $threshold"|awk '
-	{
-		if ($1 >= $2)
-		{
-			print 1
-		}
-		else
-		{
-			print 0
-		}
-	}	'`
-	if [ $missed -eq 1 ]
-	then
-		try_count=$[ $try_count + 1 ]
-		if [ $try_count -ge 3 ]
-		then
-			return 1
-		else
-			return 0
-		fi
-	else
-		period=$[ $period / 2 ]
-		if [ $period -lt 1 ]
-		then
-			return 1
-		else
-			try_count=0
-			return 0
-		fi	
-	fi
-}
 function get_next_period()
 {
 	last_pass_period=$1
@@ -113,10 +80,10 @@ do
 		;;
 	esac
 done
-if [ -n "$start_period" ] && [ -n "$threshold" ] && [ -n "$log_dst" ]
+if [ -n "$start_period" ] && [ -n "$threshold" ] && [ -n "$log_dst" ] && [ -n $comment ]
 then	
 #prepare logging
-	batchname=`date +%Y%m%d_%H%M%S-`$comment	
+	batchname=`date +%Y%m%d_%H%M%S-`$start_period"-"$precision"-"$threshold"-"$comment	
 	mkdir -p $batchname &>/dev/null
 	if [ $? -ne 0 ]
 	then
@@ -165,5 +132,5 @@ then
 	done
 	echo "last_pass_period=$last_pass_period"
 else
-	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] [-p <precision>] -l <log_dst> -c comment"
+	echo "usage: $0 -s <start_period> -t <miss_ratio_threshold> -u [<utilization>] [-p <precision>] -l <log_dst> -c <comment>"
 fi
