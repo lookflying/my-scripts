@@ -3,7 +3,7 @@ vm_utilization=50
 utilization=50 #default 50%
 duration=20 #default 20
 log_switch=0
-taskscript=`dirname $0`/rt_task.sh
+taskscript=`dirname $0`/run_rt_task_nano.sh
 runlog="run.log"
 function run_task()
 {
@@ -83,7 +83,7 @@ then
 		exit 1
 	fi
 	echo $batchname
-	rsync -av $batchname $log_dst
+	rsync -av $batchname $log_dst &>/dev/null
 	if [ $? -ne 0 ]
 	then
 		echo can not access $log_dst
@@ -97,12 +97,13 @@ then
 	finished=$?
 	while [ $finished -eq 0 ]
 	do
-		echo "period=$period"
+		echo -n "period=$period"
 		budget=$[ $period * $vm_utilization / 100 ]
 		execute=$[ $budget * $utilization / 100 ]
-		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname
+		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname >/dev/null
 		miss_ratio=`get_task_miss_rate`
 		miss_ratio=${miss_ratio%\%}
+		echo -n -e "\tmiss_ratio=$miss_ratio%\n"
 		check_finished
 		finished=$?
 	done
