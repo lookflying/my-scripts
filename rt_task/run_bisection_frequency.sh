@@ -90,6 +90,7 @@ function get_next_period()
 	elif [ $last_pass_period -gt $last_period ]
 	then
 		if [ $[ $last_pass_period - $last_period ] -gt $precision ]
+		then
 			next_period=$[ ($last_pass_period + $last_period) / 2 ]
 #			echo $next_period
 			return 0
