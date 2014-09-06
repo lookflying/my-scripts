@@ -50,7 +50,12 @@ function check_finished()
 			echo 0
 		fi
 	else
-		period=$[ $period * 2 ]
+		period=$[ $period / 2 ]
+		if [ $period -lt 1 ]
+		then
+			echo 1
+			return
+		fi	
 		try_count=0
 		echo 0
 	fi
