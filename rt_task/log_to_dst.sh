@@ -10,7 +10,8 @@ then
 	rsync -av $tmp_file $log_dst/$file_name
 	if [ $? -ne 0 ]
 	then
-		echo "fail to send file\($tmp_file\)  to $log_dst/$file_name"
+		echo "fail to send file($tmp_file)  to $log_dst/$file_name"
 	fi
 else
 	echo "usage: $0 <log_dst> <file_name> <cmd>..."
+fi
