@@ -87,7 +87,7 @@ done
 if [ -n "$start_period" ] && [ -n "$threshold" ] && [ -n "$log_dst" ] && [ -n $comment ]
 then	
 #prepare logging
-	batchname=`date +%Y%m%d_%H%M%S-`"frequency-"$start_period"-"$precision"-"$threshold"-"$comment	
+	batchname=`date +%Y%m%d_%H%M%S-`"frequency-"$start_period"-"$precision"-"$threshold"-"$utilization"-"$comment	
 	mkdir -p $batchname &>/dev/null
 	if [ $? -ne 0 ]
 	then
