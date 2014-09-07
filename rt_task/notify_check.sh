@@ -1,6 +1,7 @@
 #!/bin/bash
 loop=0
-while getopts :p:l:a:u: opt
+ref_timestamp=`date +%s` #default use script start time as ref_timestamp
+while getopts :p:l:a:u:t: opt
 do
 	case $opt in
 	p)
@@ -15,11 +16,14 @@ do
 	a)
 		notify_ip=$OPTARG
 		;;
+	t)
+		ref_timestamp=$OPTARG
+		;;
 	esac
 done
 shift $[ $OPTIND - 1 ]
 
-if [ $# -ge 1 ] && [ -n "$notify_user" ] && [ -n "$notify_ip" ] && [ -n "$notify_path" ]
+if [ $# -ge 1 ] && [ -n "$notify_user" ] && [ -n "$notify_ip" ] && [ -n "$notify_path" ] && [ -n "$ref_timestamp" ]
 then
 	notify_keys=$@
 	running=1
@@ -31,6 +35,12 @@ then
 		do
 			state=`ssh $notify_user@$notify_ip "cat $notify_path/$key" 2>/dev/null` 
 			if [ $? -ne 0 ]
+			then
+				running=1
+				break;
+			fi
+			ts=`ssh $notify_user@$notify_ip "stat -c %Y $notify_path/$key" 2>/dev/null`
+			if [ $? -ne 0 ] || [ $ts -lt $ref_timestamp ]
 			then
 				running=1
 				break;
@@ -50,10 +60,10 @@ then
 			break
 		fi
 	done
-	for key in $notify_keys
-	do
-		ssh $notify_user@$notify_ip "rm $notify_path/$key"
-	done
+#	for key in $notify_keys
+#	do
+#		ssh $notify_user@$notify_ip "rm $notify_path/$key"
+#	done
 	if [ $loop -ne 0 ]
 	then
 		end=`date +%s`
@@ -61,5 +71,5 @@ then
 	fi
 	exit $running
 else
-	echo "usage: $0 -l loop -u <notify_user> -a <notify_ip> -p <notify_path>  <notify_key1> <notify_key2> ..."
+	echo "usage: $0 -l loop -u <notify_user> -a <notify_ip> -p <notify_path> [-t <reference_timestamp>] <notify_key1> <notify_key2>..."
 fi

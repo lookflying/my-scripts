@@ -42,7 +42,13 @@ function get_next_period()
 {
 	if [ -z "$last_pass_period" ]
 	then
-		return 1
+		if [ -n "$last_period" ] && [ "$last_fail_period" = "$last_period" ]
+		then
+			next_period=$[ $last_period * 2 ]
+			return 0
+		else
+			return 1
+		fi
 	fi
 	if [ $last_pass_period -ge $last_fail_period ]
 	then
@@ -120,6 +126,7 @@ then
 			fi
 			retry_count=$[ $retry_count + 1 ]
 		done
+		last_period=$period
 		if [ $missed -eq 1 ]
 		then
 			last_fail_period=$period
