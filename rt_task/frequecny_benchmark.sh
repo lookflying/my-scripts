@@ -89,14 +89,15 @@ then
 fi
 vm1_period=1000
 vm2_period=1000
-for vm_utilization in 10 20 30 40 50
+#for vm_utilization in 10 20 30 40 50
+for vm_utilization in 50
 do
 	vm_total_utilization=90
 	vm1_exec=$[ $vm_period * $vm_utilization * vm_total_utilization / 100 / 100 ]
 	vm2_exec=$[ $vm_period * (100 - $vm_utilization) * vm_total_utilization / 100 / 100 ]
-	echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm1_period:$vm1_exec -i $vm1_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
-	echo_run	$nohup_run $user@$vm2_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm2_period:$vm2_exec -i $vm2_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
-	echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip $vm2_ip
+#	echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm1_period:$vm1_exec -i $vm1_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
+#	echo_run	$nohup_run $user@$vm2_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm2_period:$vm2_exec -i $vm2_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
+#	echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip $vm2_ip
 		
 	echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm1_period:$vm1_exec -i $vm1_pid -s 1000000000 -t 1 -u 50 -p 1000 -l $log_base/$dual_vm_log_dir 
 	echo_run	$nohup_run $user@$vm2_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm2_period:$vm2_exec -i $vm2_pid -s 1000000000 -t 1 -u 50 -p 1000 -l $log_base/$dual_vm_log_dir 
