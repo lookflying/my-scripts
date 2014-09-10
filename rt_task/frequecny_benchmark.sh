@@ -18,8 +18,8 @@ log_to_dst=./log_to_dst.sh
 
 host_ip=192.168.1.22
 host_working_dir=/root/mnt/my-scripts/rt_task
-vm1_ip=192.168.1.45
-vm2_ip=192.168.1.41
+vm1_ip=192.168.1.20
+vm2_ip=192.168.1.24
 vm_working_dir=/root/my-scripts/rt_task
 log_base=lookflying@192.168.1.3:/home/lookflying/work/log
 notify_info=lookflying,192.168.1.3,/dev/shm
@@ -69,8 +69,8 @@ vm_period=1000
 #echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip 
 #done
 #
-##for vm_period in 100 1000 10000 100000
-#for vm_period in 1000000
+##for vm_period in 100 1000 10000 100000 1000000 10000000 100000000 1000000000 10000000000 
+#for vm_period in 100000000000
 #do
 #	vm_exec=$[ $vm_period / 2 ]
 #echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$single_vm_log_dir 
@@ -87,26 +87,42 @@ then
 	echo cannot get vm2 pid
 	exit 1
 fi
-vm1_period=1000
-vm2_period=1000
-#for vm_utilization in 10 20 30 40 50
-for vm_utilization in 50
-do
-	vm_total_utilization=90
-	vm1_exec=$[ $vm_period * $vm_utilization * vm_total_utilization / 100 / 100 ]
-	vm2_exec=$[ $vm_period * (100 - $vm_utilization) * vm_total_utilization / 100 / 100 ]
+
+#for vm_period in 100 1000 10000 100000 1000000 10000000 100000000 1000000000 10000000000 100000000000
+#for vm_period in 1000000000 10000000000 100000000000
+#do
+#	vm1_period=$vm_period
+#	vm2_period=$vm_period
+#	vm_exec=$[ $vm_period / 2 ]
+#	vm1_exec=$[ $vm_exec / 2 ]
+#	vm2_exec=$[ $vm_exec / 2 ]
 #	echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm1_period:$vm1_exec -i $vm1_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
 #	echo_run	$nohup_run $user@$vm2_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm2_period:$vm2_exec -i $vm2_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
 #	echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip $vm2_ip
+#
+#done
+
+
+vm1_period=1000
+vm2_period=1000
+for vm_utilization in 10 20 30 40 50 60 70 80 90
+#for vm_utilization in 50
+do
+	vm_total_utilization=50
+	vm1_exec=$[ $vm_period * $vm_utilization * vm_total_utilization / 100 / 100 ]
+	vm2_exec=$[ $vm_period * (100 - $vm_utilization) * vm_total_utilization / 100 / 100 ]
+	echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm1_period:$vm1_exec -i $vm1_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
+	echo_run	$nohup_run $user@$vm2_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm2_period:$vm2_exec -i $vm2_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
+	echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip $vm2_ip
 		
 	echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm1_period:$vm1_exec -i $vm1_pid -s 1000000000 -t 1 -u 50 -p 1000 -l $log_base/$dual_vm_log_dir 
 	echo_run	$nohup_run $user@$vm2_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm2_period:$vm2_exec -i $vm2_pid -s 1000000000 -t 1 -u 50 -p 1000 -l $log_base/$dual_vm_log_dir 
 	echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip $vm2_ip
 done
 
-for vm_utilization in 10 20 30 40 50
+for vm_utilization in 10 20 30 40 50 60 70 80 90
 do
-	vm_total_utilization=50
+	vm_total_utilization=90
 	vm1_exec=$[ $vm_period * $vm_utilization * vm_total_utilization / 100 / 100 ]
 	vm2_exec=$[ $vm_period * (100 - $vm_utilization) * vm_total_utilization / 100 / 100 ]
 	echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$dual_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm1_period:$vm1_exec -i $vm1_pid -s 1000000000 -t 1 -u 0 -p 1000 -l $log_base/$dual_vm_log_dir 
