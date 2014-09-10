@@ -3,7 +3,7 @@ if [ $# -eq 1 ]
 then
 	log_dir=$1
 	log_files=`find $log_dir -maxdepth 1 -type f -name \*.txt`
-	echo -n -e "vm period\tvm exec\tvm utilization\ttask utilization\tmiss ratio threshold\tperiod\tfreq\tip\n"
+	echo -n -e "vm period\tvm exec\tvm utilization\ttask utilization\tmiss ratio threshold\tperiod\tfreq\tip\tmtime\n"
 	for file in $log_files
 	do
 		period=`tail -1 $file|awk '{print $2}'`
