@@ -15,6 +15,9 @@ run_frequency=./bisection_frequency.sh
 single_vm_frequency=./single_vm_frequency.sh
 #single_vm_frequency=./longrun.sh
 log_to_dst=./log_to_dst.sh
+trace_sched=./trace_sched.sh
+run_rt_task=./run_rt_task_nano.sh
+kill_trace_cmd=./kill_trace_cmd.sh
 
 host_ip=192.168.1.22
 host_working_dir=/root/mnt/my-scripts/rt_task
@@ -29,6 +32,7 @@ notify_path=/dev/shm
 host_log_dir=`date +%Y%m%d`-host-frequency
 single_vm_log_dir=`date +%Y%m%d`-single_vm-frequency
 dual_vm_log_dir=`date +%Y%m%d`-dual_vm-frequency
+dual_vm_log_dir=`date +%Y%m%d`-trace_log
 for key in $host_ip $vm1_pid $vm2_pid
 do
 	rm -rf $notify_path/$key
@@ -51,25 +55,36 @@ $prepare_log $log_base $dual_vm_log_dir
 ##$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $host_ip 
 
 vm1_pid=`ssh $user@$host_ip "cat /run/guest.tid"`
-if [ $? -ne 0 ]
-then
-	echo cannot get vm1 pid
-	exit 1
-fi
-#single vm
-#vm period=1000 us
-vm_period=1000
-#for vm_utilization in 10 30 50 70 90 
-#for vm_utilization in 100 90 80 70 60 50 40 30 20 10
-for vm_utilization in 60 50 40 30 20 10
-#for vm_utilization in  70 90 
-do
-	vm_exec=$[ $vm_period * $vm_utilization / 100 ]
-echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 10000000 -t 1 -u 0 -p 1000 -l $log_base/$single_vm_log_dir 
-echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip 
-#echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 1000000000 -t 1 -u 50 -p 1000 -l $log_base/$single_vm_log_dir 
+
+echo_run $nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $run_rt_task -p3000000 -b1500000 -e0 -d20 -l0 |tee /dev/shm/run.log 
+echo_run $nohup_run $user@$host_ip $host_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log 0 "host_sched.txt" $trace_sched $vm1_pid
+echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip
+echo_run $nohup_run $user@$host_ip $host_working_dir $kill_trace_cmd
+echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $host_ip
+rsync $user@$vm1_ip:/dev/shm/*.log $log_base/$trace_log
+rsync $user@$host_ip:/dev/shm/* $log_base/$trace_log
+
+
+
+#if [ $? -ne 0 ]
+#then
+#	echo cannot get vm1 pid
+#	exit 1
+#fi
+##single vm
+##vm period=1000 us
+#vm_period=1000
+##for vm_utilization in 10 30 50 70 90 
+##for vm_utilization in 100 90 80 70 60 50 40 30 20 10
+#for vm_utilization in 60 50 40 30 20 10
+##for vm_utilization in  70 90 
+#do
+#	vm_exec=$[ $vm_period * $vm_utilization / 100 ]
+#echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 10000000 -t 1 -u 0 -p 1000 -l $log_base/$single_vm_log_dir 
 #echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip 
-done
+##echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 1000000000 -t 1 -u 50 -p 1000 -l $log_base/$single_vm_log_dir 
+##echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip 
+#done
 #
 ##for vm_period in 100 1000 10000 100000 1000000 10000000 100000000 1000000000 10000000000 
 #for vm_period in 100000000000
