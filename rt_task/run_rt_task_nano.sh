@@ -12,15 +12,15 @@ while getopts :p:b:e:d:l: opt
 do
 	case $opt in
 	p)
-		echo period = $OPTARG us
+		echo period = $OPTARG ns
 		period=$OPTARG
 		;;
 	b)
-		echo budget = $OPTARG us
+		echo budget = $OPTARG ns
 		budget=$OPTARG
 		;;
 	e)
-		echo execute = $OPTARG us
+		echo execute = $OPTARG ns
 		execute=$OPTARG
 		;;
 	d)
