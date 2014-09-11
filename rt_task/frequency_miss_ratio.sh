@@ -1,6 +1,8 @@
 #!/bin/bash
 duration=20
 log_switch=0
+taskscript=`dirname $0`/run_rt_task_nano.sh
+runlog="run.log"
 function run_task()
 {
 	dst=$6
@@ -33,10 +35,10 @@ shift $[ $OPTIND - 1 ]
 
 periods=$@
 
-if [ -n "$utilization" ] && [ -n "$log_dst" ] && [ -n "$comment" ] && [ -n "$periods" ]
+if [ -n "$utilization" ] && [ -n "$log_dst" ] && [ -n "$comment" ] && [ -n "$periods" ] && [ -n "$budget_utilization" ]
 then
 	#prepare log dir
-	batchname=`date +%Y%m%d_%H%M%S-`"frequency-miss_ratio-"$comment
+	batchname=`date +%Y%m%d-`"frequency-miss_ratio-"$comment
 	mkdir -p /tmp/$batchname &>/dev/null
 	if [ $? -ne 0 ]
 	then
@@ -53,9 +55,12 @@ then
 	rm -r /tmp/$batchname
 	#benchmark
 	for period in $periods
+	do
 		budget=$[ $period * $budget_utilization / 100 ]
 		execute=$[ $period * $utilization / 100 ]
-		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname &> /dev/null
+		echo $period:$budget:$execute
+		run_task $period $budget $execute $duration	$log_switch $log_dst/$batchname 
+	done
 	echo 
 else
 	echo "usage:	$0 -u <utilization> -b <budget_utilization> -l <log_dst> -c <comment> <period1> <period2> ..."
