@@ -16,7 +16,7 @@ single_vm_frequency=./single_vm_frequency.sh
 #single_vm_frequency=./longrun.sh
 log_to_dst=./log_to_dst.sh
 trace_sched=./trace_sched.sh
-run_rt_task=./run_rt_task_nano.sh
+run_rt_task=./run_task_kill.sh
 kill_trace_cmd=./kill_trace_cmd.sh
 
 host_ip=192.168.1.22
@@ -32,7 +32,7 @@ notify_path=/dev/shm
 host_log_dir=`date +%Y%m%d`-host-frequency
 single_vm_log_dir=`date +%Y%m%d`-single_vm-frequency
 dual_vm_log_dir=`date +%Y%m%d`-dual_vm-frequency
-dual_vm_log_dir=`date +%Y%m%d`-trace_log
+trace_log_dir=`date +%Y%m%d`-trace_log
 for key in $host_ip $vm1_pid $vm2_pid
 do
 	rm -rf $notify_path/$key
@@ -40,6 +40,7 @@ done
 $prepare_log $log_base $host_log_dir
 $prepare_log $log_base $single_vm_log_dir
 $prepare_log $log_base $dual_vm_log_dir
+$prepare_log $log_base $trace_log_dir
 
 #host
 #echo_run $nohup_run $user@$host_ip $host_working_dir $notify_run $notify_info $log_to_dst $log_base/$host_log_dir 1 $run_frequency -s 1000000 -t 1 -u 0 -p 1000 -l $log_base/$host_log_dir -c host 
@@ -55,15 +56,19 @@ $prepare_log $log_base $dual_vm_log_dir
 ##$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $host_ip 
 
 vm1_pid=`ssh $user@$host_ip "cat /run/guest.tid"`
-
-echo_run $nohup_run "$user@$vm1_ip $vm_working_dir $notify_run $notify_info $run_rt_task -p3000000 -b1500000 -e0 -d20 -l0 |tee /dev/shm/run.log "
-echo_run $nohup_run $user@$host_ip $host_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log 0 "host_sched.txt" $trace_sched $vm1_pid
-echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip
-echo_run $nohup_run $user@$host_ip $host_working_dir $kill_trace_cmd
-echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $host_ip
+for task_period in  400000 800000 1000000 2000000
+do
+	task_budget=$[ $task_period / 2 ]
+	task_exec=0
+	echo_run mkdir -p /home/lookflying/work/log/$trace_log_dir/$task_period
+	echo_run $nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log_dir/$task_period 0 "guest_sched.txt" $run_rt_task -p$task_period -b$task_budget -e$task_exec -d20 -l0 
+	echo_run $nohup_run $user@$host_ip $host_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log_dir/$task_period 0 "host_sched.txt" $trace_sched $vm1_pid
+	echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip
+#	echo_run $nohup_run $user@$host_ip $host_working_dir $kill_trace_cmd
+	echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $host_ip
 #echo_run $nohup_run $user@$vm1_ip $vm_working_dir "rsync -av /dev/shm/\*.log /dev/shm/\*.dat $log_base/$trace_log"
 #echo_run $nohup_run $user@$host_ip $host_working_dir "rsync -av /dev/shm/\* $log_base/$trace_log"
-
+done
 
 
 #if [ $? -ne 0 ]
