@@ -56,13 +56,13 @@ $prepare_log $log_base $dual_vm_log_dir
 
 vm1_pid=`ssh $user@$host_ip "cat /run/guest.tid"`
 
-echo_run $nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $run_rt_task -p3000000 -b1500000 -e0 -d20 -l0 |tee /dev/shm/run.log 
+echo_run $nohup_run "$user@$vm1_ip $vm_working_dir $notify_run $notify_info $run_rt_task -p3000000 -b1500000 -e0 -d20 -l0 |tee /dev/shm/run.log "
 echo_run $nohup_run $user@$host_ip $host_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log 0 "host_sched.txt" $trace_sched $vm1_pid
 echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip
 echo_run $nohup_run $user@$host_ip $host_working_dir $kill_trace_cmd
 echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $host_ip
-rsync $user@$vm1_ip:/dev/shm/*.log $log_base/$trace_log
-rsync $user@$host_ip:/dev/shm/* $log_base/$trace_log
+#echo_run $nohup_run $user@$vm1_ip $vm_working_dir "rsync -av /dev/shm/\*.log /dev/shm/\*.dat $log_base/$trace_log"
+#echo_run $nohup_run $user@$host_ip $host_working_dir "rsync -av /dev/shm/\* $log_base/$trace_log"
 
 
 
