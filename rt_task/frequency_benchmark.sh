@@ -18,6 +18,7 @@ log_to_dst=./log_to_dst.sh
 trace_sched=./trace_sched.sh
 run_rt_task=./run_task_kill.sh
 kill_trace_cmd=./kill_trace_cmd.sh
+max_int_freq=./int_freq_kill.sh
 
 host_ip=192.168.1.22
 host_working_dir=/root/mnt/my-scripts/rt_task
@@ -56,39 +57,58 @@ $prepare_log $log_base $trace_log_dir
 ##$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $host_ip 
 
 vm1_pid=`ssh $user@$host_ip "cat /run/guest.tid"`
-for task_period in  400000 800000 1000000 2000000
+if [ $? -ne 0 ]
+then
+	echo cannot get vm1 pid
+	exit 1
+fi
+#for task_period in  400000 800000 1000000 2000000
+#for task_period in 100000 200000 300000
+#for task_period in 250000
+#do
+#	task_budget=$[ $task_period / 2 ]
+#	task_exec=0
+#	echo_run mkdir -p /home/lookflying/work/log/$trace_log_dir/$task_period
+#	echo_run $nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log_dir/$task_period 0 "guest_sched.txt" $run_rt_task -p$task_period -b$task_budget -e$task_exec -d20 -l0 
+#	echo_run $nohup_run $user@$host_ip $host_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log_dir/$task_period 0 "host_sched.txt" $trace_sched $vm1_pid
+#	echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip $host_ip
+##	echo_run $nohup_run $user@$host_ip $host_working_dir $kill_trace_cmd
+##echo_run $nohup_run $user@$vm1_ip $vm_working_dir "rsync -av /dev/shm/\*.log /dev/shm/\*.dat $log_base/$trace_log"
+##echo_run $nohup_run $user@$host_ip $host_working_dir "rsync -av /dev/shm/\* $log_base/$trace_log"
+#done
+
+for vm_period in 100000000 10000000 1000000 100000 10000 1000 100 10
 do
-	task_budget=$[ $task_period / 2 ]
-	task_exec=0
+	vm_budget=$[ $vm_period / 2 ]
+	echo_run mkdir -p /home/lookflying/work/log/$trace_log_dir/$vm_period"_"$vm_budget
+	echo_run ssh $user@$host_ip "set_deadline $vm1_pid $vm_period:$vm_budget"
+	if [ $? -ne 0 ]
+	then
+		echo fail to set_deadline
+		exit 1
+	fi
 	echo_run mkdir -p /home/lookflying/work/log/$trace_log_dir/$task_period
-	echo_run $nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log_dir/$task_period 0 "guest_sched.txt" $run_rt_task -p$task_period -b$task_budget -e$task_exec -d20 -l0 
-	echo_run $nohup_run $user@$host_ip $host_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log_dir/$task_period 0 "host_sched.txt" $trace_sched $vm1_pid
-	echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip
+	echo_run $nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log_dir/$vm_period"_"$vm_budget 0 "int_freq.txt" $max_int_freq 10 
+	echo_run $nohup_run $user@$host_ip $host_working_dir $notify_run $notify_info $log_to_dst $log_base/$trace_log_dir/$vm_period"_"$vm_budget 0 "host_sched.txt" $trace_sched $vm1_pid
+	echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip $host_ip
 #	echo_run $nohup_run $user@$host_ip $host_working_dir $kill_trace_cmd
-	echo_run $notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $host_ip
 #echo_run $nohup_run $user@$vm1_ip $vm_working_dir "rsync -av /dev/shm/\*.log /dev/shm/\*.dat $log_base/$trace_log"
 #echo_run $nohup_run $user@$host_ip $host_working_dir "rsync -av /dev/shm/\* $log_base/$trace_log"
 done
 
-
-#if [ $? -ne 0 ]
-#then
-#	echo cannot get vm1 pid
-#	exit 1
-#fi
-##single vm
-##vm period=1000 us
+###single vm
+###vm period=1000 us
 #vm_period=1000
 ##for vm_utilization in 10 30 50 70 90 
-##for vm_utilization in 100 90 80 70 60 50 40 30 20 10
-#for vm_utilization in 60 50 40 30 20 10
+#for vm_utilization in 100 90 80 70 60 50 40 30 20 10
+##for vm_utilization in 60 50 40 30 20 10
 ##for vm_utilization in  70 90 
 #do
 #	vm_exec=$[ $vm_period * $vm_utilization / 100 ]
-#echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 10000000 -t 1 -u 0 -p 1000 -l $log_base/$single_vm_log_dir 
-#echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip 
-##echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 1000000000 -t 1 -u 50 -p 1000 -l $log_base/$single_vm_log_dir 
+##echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 10000000 -t 1 -u 0 -p 1000 -l $log_base/$single_vm_log_dir 
 ##echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip 
+#echo_run	$nohup_run $user@$vm1_ip $vm_working_dir $notify_run $notify_info $log_to_dst $log_base/$single_vm_log_dir 2 $single_vm_frequency -h $host_ip -v $vm_period:$vm_exec -i $vm1_pid -s 100000000 -t 1 -u 50 -p 1000 -l $log_base/$single_vm_log_dir 
+#echo_run	$notify_check -u $notify_user -a $notify_ip -p $notify_path -l 1 $vm1_ip 
 #done
 #
 ##for vm_period in 100 1000 10000 100000 1000000 10000000 100000000 1000000000 10000000000 
