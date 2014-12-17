@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 param=$1
 period=${param%:*}
 budget=${param#*:}
