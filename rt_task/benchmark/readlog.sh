@@ -19,9 +19,9 @@ r_period="(?<=period\\s=\\s)\d+(?=\\sns)"
 r_budget="(?<=budget\\s=\\s)\d+(?=\\sns)"
 r_execution="(?<=exec\\s=\\s)\d+(?=\\sns)"
 r_misscnt="(?<=miss_cnt=\\s)\\d+(?=\\s)"
-r_misscntratio="miss_cnt=\\s\\d+\s\\K\\d+\\.\\d+%"
+r_misscntratio="miss_cnt=\\s\\d+\s\\K\\d+\\.\\d+(?=%)"
 r_misscnt_aftermiddle="(?<=miss_cnt_after_middle=\\s)\\d+(?=\\s)"
-r_misscntratio_aftermiddle="miss_cnt_after_middle=\\s\\d+\s\\K\\d+\\.\\d+%"
+r_misscntratio_aftermiddle="miss_cnt_after_middle=\\s\\d+\s\\K\\d+\\.\\d+(?=%)"
 
 logfile=$1
 periods=(`grep -o -P -e "$r_period" $logfile`)
@@ -45,8 +45,10 @@ then
 	exit 1
 fi
 
+
 if all_equal ${periods[@]} && all_equal ${budgets[@]}
 then
+	echo -e -n "period\tbudget\texec\tmiss\tratio\tmiss am\tratio am\n"
 	cnt=${#periods[@]}
 	for ((i=0; i<$cnt; ++i))
 	do
