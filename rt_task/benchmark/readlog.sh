@@ -48,11 +48,12 @@ fi
 
 if all_equal ${periods[@]} && all_equal ${budgets[@]}
 then
-	echo -e -n "period\tbudget\texec\tmiss\tratio\tmiss am\tratio am\n"
+	echo -e -n "period\tbudget\texec\tutility\tmiss\tratio\tmiss am\tratio am\n"
 	cnt=${#periods[@]}
 	for ((i=0; i<$cnt; ++i))
 	do
-		echo -e -n  "${periods[$i]}\t${budgets[$i]}\t${executions[$i]}\t${misscnts[$i]}\t${misscntratios[$i]}\t${misscnt_aftermiddles[$i]}\t${misscntratio_aftermiddles[$i]}\n"
+		utility=`expr ${executions[$i]} \* 100 / ${budgets[$i]}`
+		echo -e -n  "${periods[$i]}\t${budgets[$i]}\t${executions[$i]}\t$utility\t${misscnts[$i]}\t${misscntratios[$i]}\t${misscnt_aftermiddles[$i]}\t${misscntratio_aftermiddles[$i]}\n"
 	done
 else
 	echo not equal
