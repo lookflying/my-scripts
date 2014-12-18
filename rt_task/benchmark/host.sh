@@ -5,3 +5,4 @@
 ./trend.sh 4000000:2000000 30|tee /dev/shm/host_40.log
 ./trend.sh 2000000:1000000 30|tee /dev/shm/host_20.log
 ./trend.sh 1000000:500000 30|tee /dev/shm/host_10.log
+cp /dev/shm/host_*.log .
