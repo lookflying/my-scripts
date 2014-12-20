@@ -52,7 +52,7 @@ then
 	cnt=${#periods[@]}
 	for ((i=0; i<$cnt; ++i))
 	do
-		utility=`expr ${executions[$i]} \* 100 / ${budgets[$i]}`
+		utility=`expr ${executions[$i]} \* 100 / ${periods[$i]}`
 		echo -e -n  "${periods[$i]}\t${budgets[$i]}\t${executions[$i]}\t$utility\t${misscnts[$i]}\t${misscntratios[$i]}\t${misscnt_aftermiddles[$i]}\t${misscntratio_aftermiddles[$i]}\n"
 	done
 else
